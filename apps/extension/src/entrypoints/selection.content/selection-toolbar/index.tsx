@@ -4,6 +4,7 @@ import { configFieldsAtomMap } from '@/utils/atoms/config'
 import { MARGIN } from '@/utils/constants/selection'
 import { AiButton, AiPopover } from './ai-button'
 import { isTooltipVisibleAtom, selectionContentAtom, selectionRangeAtom } from './atom'
+import { SpeakButton } from './speak-button'
 import { TranslateButton, TranslatePopover } from './translate-button'
 
 export function SelectionToolbar() {
@@ -139,6 +140,7 @@ export function SelectionToolbar() {
         >
           <AiButton />
           <TranslateButton />
+          <SpeakButton />
         </div>
       )}
       <AiPopover />
