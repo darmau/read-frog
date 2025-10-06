@@ -5,6 +5,7 @@ import { MIN_SIDE_CONTENT_WIDTH } from '@/utils/constants/side'
 import { isReadProvider, isTranslateProvider, NON_API_TRANSLATE_PROVIDERS_MAP, providersConfigSchema } from './provider'
 import { readConfigSchema } from './read'
 import { translateConfigSchema } from './translate'
+import { ttsConfigSchema } from './tts'
 // Language schema
 const languageSchema = z.object({
   detectedCode: langCodeISO6393Schema,
@@ -41,6 +42,7 @@ export const configSchema = z.object({
   providersConfig: providersConfigSchema,
   read: readConfigSchema,
   translate: translateConfigSchema,
+  tts: ttsConfigSchema,
   floatingButton: floatingButtonSchema,
   selectionToolbar: selectionToolbarSchema,
   sideContent: sideContentSchema,

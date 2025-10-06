@@ -144,6 +144,11 @@ Translate to {{targetLang}}:
         translationNodeStyle: 'blur',
         customAutoTranslateShortcutKey: ['alt', 'b'],
       },
+      tts: {
+        model: 'tts-1-hd',
+        voice: 'alloy',
+        speed: 1.25,
+      },
       floatingButton: {
         enabled: true,
         position: 0.75,
@@ -156,7 +161,7 @@ Translate to {{targetLang}}:
       betaExperience: {
         enabled: false,
       },
-    } satisfies Partial<Config>,
+    } satisfies Config,
   },
   'config-from-v022': {
     description: 'Add batch queue configuration for translation requests',
@@ -297,9 +302,14 @@ Translate to {{targetLang}}:
         },
         translationNodeStyle: 'default',
       },
+      tts: {
+        model: 'gpt-4o-mini-tts',
+        voice: 'verse',
+        speed: 0.9,
+      },
       betaExperience: {
         enabled: false,
       },
-    } satisfies Partial<Config>,
+    } satisfies Config,
   },
 }

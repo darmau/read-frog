@@ -7,7 +7,7 @@ import { DEFAULT_AUTO_TRANSLATE_SHORTCUT_KEY, DEFAULT_BATCH_CONFIG, DEFAULT_REQU
 import { DEFAULT_TRANSLATION_NODE_STYLE } from './translation-node-style'
 
 export const CONFIG_STORAGE_KEY = 'config'
-export const CONFIG_SCHEMA_VERSION = 25
+export const CONFIG_SCHEMA_VERSION = 26
 
 export const DEFAULT_FLOATING_BUTTON_POSITION = 0.66
 
@@ -45,6 +45,11 @@ export const DEFAULT_CONFIG: Config = {
     },
     translationNodeStyle: DEFAULT_TRANSLATION_NODE_STYLE,
     customAutoTranslateShortcutKey: DEFAULT_AUTO_TRANSLATE_SHORTCUT_KEY,
+  },
+  tts: {
+    model: 'tts-1',
+    voice: 'alloy',
+    speed: 1,
   },
   floatingButton: {
     enabled: true,

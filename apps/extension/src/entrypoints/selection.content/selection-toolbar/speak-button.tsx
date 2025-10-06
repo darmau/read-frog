@@ -1,3 +1,5 @@
+import type { TTSModel } from '@/types/config/tts'
+
 import { i18n } from '#imports'
 import { IconLoader2, IconVolume } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
@@ -6,6 +8,7 @@ import { useCallback } from 'react'
 import { toast } from 'sonner'
 import { configFieldsAtomMap } from '@/utils/atoms/config'
 import { getProviderApiKey, getProviderBaseURL } from '@/utils/config/helpers'
+import { DEFAULT_CONFIG } from '@/utils/constants/config'
 import { LRUCache } from '@/utils/data-structure/rlu'
 import { isTooltipVisibleAtom, selectionContentAtom } from './atom'
 
@@ -13,6 +16,9 @@ interface SpeakMutationVariables {
   apiKey: string
   baseURL: string
   selectionContent: string
+  model: TTSModel
+  voice: string
+  speed: number
 }
 
 interface CachedAudio {
@@ -64,11 +70,13 @@ export function SpeakButton() {
   const selectionContent = useAtomValue(selectionContentAtom)
   const setIsTooltipVisible = useSetAtom(isTooltipVisibleAtom)
   const providersConfig = useAtomValue(configFieldsAtomMap.providersConfig)
+  const ttsConfig = useAtomValue(configFieldsAtomMap.tts)
+  const betaExperienceConfig = useAtomValue(configFieldsAtomMap.betaExperience)
 
   const openaiProvider = providersConfig.find(p => p.provider === 'openai' && p.enabled)
 
   const speakMutation = useMutation<void, Error, SpeakMutationVariables, { toastId: string | number }>({
-    mutationFn: async ({ selectionContent, apiKey, baseURL }) => {
+    mutationFn: async ({ selectionContent, apiKey, baseURL, model, voice, speed }) => {
       // Stop any currently playing audio before starting new one
       if (currentAudio) {
         currentAudio.pause()
@@ -77,7 +85,8 @@ export function SpeakButton() {
       }
 
       // Check cache first
-      const cached = audioCache.get(selectionContent)
+      const cacheKey = JSON.stringify({ selectionContent, model, voice, speed })
+      const cached = audioCache.get(cacheKey)
       let audioBlob: Blob
       let audioUrl: string
 
@@ -95,10 +104,10 @@ export function SpeakButton() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'tts-1',
+            model,
             input: selectionContent,
-            voice: 'alloy',
-            speed: 1.0,
+            voice,
+            speed,
           }),
         })
 
@@ -111,7 +120,7 @@ export function SpeakButton() {
         audioUrl = URL.createObjectURL(audioBlob)
 
         // Cache the audio data
-        audioCache.set(selectionContent, { url: audioUrl, blob: audioBlob })
+        audioCache.set(cacheKey, { url: audioUrl, blob: audioBlob })
       }
 
       const audio = new Audio(audioUrl)
@@ -176,12 +185,17 @@ export function SpeakButton() {
 
     const baseURL = getProviderBaseURL(providersConfig, openaiProvider.id) || 'https://api.openai.com/v1'
 
+    const { model, voice, speed } = betaExperienceConfig.enabled ? ttsConfig : DEFAULT_CONFIG.tts
+
     mutate({
       apiKey,
       baseURL,
       selectionContent,
+      model,
+      voice,
+      speed,
     })
-  }, [selectionContent, providersConfig, openaiProvider, mutate])
+  }, [selectionContent, providersConfig, openaiProvider, mutate, ttsConfig, betaExperienceConfig])
 
   // Don't render the button if OpenAI is not configured
   const hasApiKey = openaiProvider && getProviderApiKey(providersConfig, openaiProvider.id)
