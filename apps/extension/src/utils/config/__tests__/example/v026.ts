@@ -145,9 +145,9 @@ Translate to {{targetLang}}:
         customAutoTranslateShortcutKey: ['alt', 'b'],
       },
       tts: {
-        model: 'tts-1-hd',
+        model: 'tts-1',
         voice: 'alloy',
-        speed: 1.25,
+        speed: 1,
       },
       floatingButton: {
         enabled: true,
@@ -303,9 +303,9 @@ Translate to {{targetLang}}:
         translationNodeStyle: 'default',
       },
       tts: {
-        model: 'gpt-4o-mini-tts',
-        voice: 'verse',
-        speed: 0.9,
+        model: 'tts-1',
+        voice: 'alloy',
+        speed: 1,
       },
       betaExperience: {
         enabled: false,
