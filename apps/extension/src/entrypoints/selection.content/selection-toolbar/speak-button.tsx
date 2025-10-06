@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react'
+import { IconLoader2, IconVolume } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
@@ -126,10 +126,10 @@ export function SpeakButton() {
     >
       {isPending
         ? (
-            <Icon icon="eos-icons:loading" className="size-4" />
+            <IconLoader2 className="size-4 animate-spin" strokeWidth={1.6} />
           )
         : (
-            <Icon icon="material-symbols:volume-up" className="size-4" />
+            <IconVolume className="size-4" strokeWidth={1.6} />
           )}
     </button>
   )
