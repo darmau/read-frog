@@ -224,6 +224,18 @@ options:
       selectLanguages: 言語を選択
   config:
     title: 設定
+    tts:
+      title: テキスト読み上げ
+      description: お好みの OpenAI 音声設定で読み上げボタンをカスタマイズします。
+      model:
+        label: OpenAI モデル
+      voice:
+        label: ボイス
+        placeholder: 例 alloy
+      speed:
+        label: 速度
+        hint: 0.25〜4.0 の値を入力できます
+      betaDisabled: テキスト読み上げ設定をカスタマイズするには Beta 体験を有効にしてください。
     sync:
       title: 設定同期
       description: 設定をインポート・エクスポート
