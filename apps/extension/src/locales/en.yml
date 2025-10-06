@@ -290,5 +290,11 @@ noAPIKeyConfig:
 translation:
   sameLanguage: Source and target languages must be different
   autoModeSameLanguage: Detected language '$1' is the same as target language
+speak:
+  playingAudio: Playing audio...
+  failedToGenerateSpeech: Failed to generate speech
+  noTextSelected: No text selected
+  openaiNotConfigured: OpenAI provider is not configured or enabled
+  openaiApiKeyNotConfigured: OpenAI API key is not configured
 shortcutKeySelector:
   placeholder: Please enter the shortcut

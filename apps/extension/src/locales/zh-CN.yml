@@ -291,5 +291,11 @@ noAPIKeyConfig:
 translation:
   sameLanguage: 源语言和目标语言必须不同
   autoModeSameLanguage: 检测到的语言 '$1' 与目标语言相同
+speak:
+  playingAudio: 正在播放音频...
+  failedToGenerateSpeech: 语音生成失败
+  noTextSelected: 未选择文本
+  openaiNotConfigured: OpenAI 提供商未配置或未启用
+  openaiApiKeyNotConfigured: OpenAI API Key 未配置
 shortcutKeySelector:
   placeholder: 请输入快捷键

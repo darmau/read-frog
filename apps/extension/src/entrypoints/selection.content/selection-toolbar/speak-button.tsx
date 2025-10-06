@@ -1,3 +1,4 @@
+import { i18n } from '#imports'
 import { IconLoader2, IconVolume } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
 import { useAtomValue, useSetAtom } from 'jotai'
@@ -64,7 +65,7 @@ export function SpeakButton() {
 
         audio.play()
           .then(() => {
-            toast.success('Playing audio...')
+            toast.success(i18n.t('speak.playingAudio'))
           })
           .catch((error) => {
             cleanup()
@@ -77,7 +78,7 @@ export function SpeakButton() {
     },
     onError: (error) => {
       console.error('TTS error:', error)
-      toast.error(error.message || 'Failed to generate speech')
+      toast.error(error.message || i18n.t('speak.failedToGenerateSpeech'))
     },
   })
 
@@ -85,18 +86,18 @@ export function SpeakButton() {
 
   const handleClick = useCallback(() => {
     if (!selectionContent) {
-      toast.error('No text selected')
+      toast.error(i18n.t('speak.noTextSelected'))
       return
     }
 
     if (!openaiProvider) {
-      toast.error('OpenAI provider is not configured or enabled')
+      toast.error(i18n.t('speak.openaiNotConfigured'))
       return
     }
 
     const apiKey = getProviderApiKey(providersConfig, openaiProvider.id)
     if (!apiKey) {
-      toast.error('OpenAI API key is not configured')
+      toast.error(i18n.t('speak.openaiApiKeyNotConfigured'))
       return
     }
 
