@@ -1,6 +1,7 @@
+/* theme.css should be imported first, because should import @tailwindcss first */
+@import '@repo/ui/theme.css';
 @import 'fumadocs-ui/css/black.css';
 @import 'fumadocs-ui/css/preset.css';
-@import '@repo/ui/theme.css';
 
 @theme inline {
   --animate-aurora: aurora 60s linear infinite;
