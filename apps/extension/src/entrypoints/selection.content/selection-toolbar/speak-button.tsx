@@ -67,7 +67,7 @@ export function SpeakButton() {
 
   const openaiProvider = providersConfig.find(p => p.provider === 'openai' && p.enabled)
 
-  const speakMutation = useMutation<void, Error, SpeakMutationVariables>({
+  const speakMutation = useMutation<void, Error, SpeakMutationVariables, { toastId: string | number }>({
     mutationFn: async ({ selectionContent, apiKey, baseURL }) => {
       // Stop any currently playing audio before starting new one
       if (currentAudio) {
@@ -85,7 +85,6 @@ export function SpeakButton() {
         // Cache hit - use cached audio
         audioBlob = cached.blob
         audioUrl = cached.url
-        toast.success(i18n.t('speak.playingAudio'))
       }
       else {
         // Cache miss - fetch from API
@@ -113,44 +112,42 @@ export function SpeakButton() {
 
         // Cache the audio data
         audioCache.set(selectionContent, { url: audioUrl, blob: audioBlob })
-        toast.success(i18n.t('speak.playingAudio'))
       }
 
       const audio = new Audio(audioUrl)
       currentAudio = audio // Track the current audio instance
 
-      await new Promise<void>((resolve, reject) => {
-        const cleanup = () => {
-          audio.onended = null
-          audio.onerror = null
-          // Clear current audio reference when done
-          if (currentAudio === audio) {
-            currentAudio = null
-          }
-          // Don't revoke URL here as it's cached for reuse
+      // Set up cleanup handlers
+      const cleanup = () => {
+        audio.onended = null
+        audio.onerror = null
+        // Clear current audio reference when done
+        if (currentAudio === audio) {
+          currentAudio = null
         }
+        // Don't revoke URL here as it's cached for reuse
+      }
 
-        audio.onended = () => {
-          cleanup()
-          resolve()
-        }
+      audio.onended = cleanup
+      audio.onerror = cleanup
 
-        audio.onerror = () => {
-          cleanup()
-          reject(new Error('Failed to play audio'))
-        }
-
-        audio.play()
-          .catch((error) => {
-            cleanup()
-            reject(error instanceof Error ? error : new Error('Failed to play audio'))
-          })
-      })
+      // Start playing audio and resolve immediately after play starts
+      await audio.play()
     },
     onMutate: () => {
       setIsTooltipVisible(false)
+      const toastId = toast.loading(i18n.t('speak.fetchingAudio'))
+      return { toastId }
     },
-    onError: (error) => {
+    onSuccess: (_data, _variables, context) => {
+      if (context?.toastId) {
+        toast.success(i18n.t('speak.playingAudio'), { id: context.toastId })
+      }
+    },
+    onError: (error, _variables, context) => {
+      if (context?.toastId) {
+        toast.dismiss(context.toastId)
+      }
       console.error('TTS error:', error)
       toast.error(error.message || i18n.t('speak.failedToGenerateSpeech'))
       // Clear current audio reference on error

@@ -291,6 +291,7 @@ translation:
   sameLanguage: Source and target languages must be different
   autoModeSameLanguage: Detected language '$1' is the same as target language
 speak:
+  fetchingAudio: Generating audio...
   playingAudio: Playing audio...
   failedToGenerateSpeech: Failed to generate speech
   noTextSelected: No text selected

@@ -292,6 +292,7 @@ translation:
   sameLanguage: 源语言和目标语言必须不同
   autoModeSameLanguage: 检测到的语言 '$1' 与目标语言相同
 speak:
+  fetchingAudio: 正在获取音频...
   playingAudio: 正在播放音频...
   failedToGenerateSpeech: 语音生成失败
   noTextSelected: 未选择文本
