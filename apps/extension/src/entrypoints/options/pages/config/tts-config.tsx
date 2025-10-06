@@ -21,6 +21,7 @@ import { configFieldsAtomMap } from '@/utils/atoms/config'
 import { getProviderApiKey, getProviderBaseURL } from '@/utils/config/helpers'
 import { ConfigCard } from '../../components/config-card'
 import { FieldWithLabel } from '../../components/field-with-label'
+import { SetApiKeyWarning } from '../../components/set-api-key-warning'
 
 const TTS_MODELS = ttsModelSchema.options
 const SPEED_SCHEMA = z.coerce.number().min(0.25).max(4)
@@ -179,6 +180,9 @@ export function TtsConfig() {
           <p className="text-sm text-muted-foreground">
             {i18n.t('options.config.tts.betaDisabled')}
           </p>
+        )}
+        {!hasApiKey && (
+          <SetApiKeyWarning />
         )}
         <FieldWithLabel id="ttsModel" label={i18n.t('options.config.tts.model.label')}>
           <Select
