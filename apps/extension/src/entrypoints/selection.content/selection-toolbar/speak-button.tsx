@@ -11,6 +11,7 @@ import { getProviderApiKey, getProviderBaseURL } from '@/utils/config/helpers'
 import { DEFAULT_CONFIG } from '@/utils/constants/config'
 import { LRUCache } from '@/utils/data-structure/rlu'
 import { isTooltipVisibleAtom, selectionContentAtom } from './atom'
+import { getCurrentAudio, setCurrentAudio, stopCurrentAudio } from './audio-manager'
 
 interface SpeakMutationVariables {
   apiKey: string
@@ -63,9 +64,6 @@ class AudioCache {
 // Create a cache to store up to 10 audio files
 const audioCache = new AudioCache()
 
-// Keep track of the currently playing audio to prevent multiple audios playing at once
-let currentAudio: HTMLAudioElement | null = null
-
 export function SpeakButton() {
   const selectionContent = useAtomValue(selectionContentAtom)
   const setIsTooltipVisible = useSetAtom(isTooltipVisibleAtom)
@@ -78,11 +76,7 @@ export function SpeakButton() {
   const speakMutation = useMutation<void, Error, SpeakMutationVariables, { toastId: string | number }>({
     mutationFn: async ({ selectionContent, apiKey, baseURL, model, voice, speed }) => {
       // Stop any currently playing audio before starting new one
-      if (currentAudio) {
-        currentAudio.pause()
-        currentAudio.currentTime = 0
-        currentAudio = null
-      }
+      stopCurrentAudio()
 
       // Check cache first
       const cacheKey = JSON.stringify({ selectionContent, model, voice, speed })
@@ -124,15 +118,15 @@ export function SpeakButton() {
       }
 
       const audio = new Audio(audioUrl)
-      currentAudio = audio // Track the current audio instance
+      setCurrentAudio(audio) // Track the current audio instance
 
       // Set up cleanup handlers
       const cleanup = () => {
         audio.onended = null
         audio.onerror = null
         // Clear current audio reference when done
-        if (currentAudio === audio) {
-          currentAudio = null
+        if (getCurrentAudio() === audio) {
+          setCurrentAudio(null)
         }
         // Don't revoke URL here as it's cached for reuse
       }
@@ -160,7 +154,7 @@ export function SpeakButton() {
       console.error('TTS error:', error)
       toast.error(error.message || i18n.t('speak.failedToGenerateSpeech'))
       // Clear current audio reference on error
-      currentAudio = null
+      setCurrentAudio(null)
     },
   })
 
