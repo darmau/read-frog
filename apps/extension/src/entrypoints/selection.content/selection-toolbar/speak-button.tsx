@@ -11,7 +11,7 @@ import { getProviderApiKey, getProviderBaseURL } from '@/utils/config/helpers'
 import { DEFAULT_CONFIG } from '@/utils/constants/config'
 import { LRUCache } from '@/utils/data-structure/rlu'
 import { isTooltipVisibleAtom, selectionContentAtom } from './atom'
-import { getCurrentAudio, setCurrentAudio, stopCurrentAudio } from './audio-manager'
+import { playTextWithTTS } from './audio-manager'
 
 interface SpeakMutationVariables {
   apiKey: string
@@ -75,67 +75,8 @@ export function SpeakButton() {
 
   const speakMutation = useMutation<void, Error, SpeakMutationVariables, { toastId: string | number }>({
     mutationFn: async ({ selectionContent, apiKey, baseURL, model, voice, speed }) => {
-      // Stop any currently playing audio before starting new one
-      stopCurrentAudio()
-
-      // Check cache first
-      const cacheKey = JSON.stringify({ selectionContent, model, voice, speed })
-      const cached = audioCache.get(cacheKey)
-      let audioBlob: Blob
-      let audioUrl: string
-
-      if (cached) {
-        // Cache hit - use cached audio
-        audioBlob = cached.blob
-        audioUrl = cached.url
-      }
-      else {
-        // Cache miss - fetch from API
-        const response = await fetch(`${baseURL}/audio/speech`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model,
-            input: selectionContent,
-            voice,
-            speed,
-          }),
-        })
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}))
-          throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`)
-        }
-
-        audioBlob = await response.blob()
-        audioUrl = URL.createObjectURL(audioBlob)
-
-        // Cache the audio data
-        audioCache.set(cacheKey, { url: audioUrl, blob: audioBlob })
-      }
-
-      const audio = new Audio(audioUrl)
-      setCurrentAudio(audio) // Track the current audio instance
-
-      // Set up cleanup handlers
-      const cleanup = () => {
-        audio.onended = null
-        audio.onerror = null
-        // Clear current audio reference when done
-        if (getCurrentAudio() === audio) {
-          setCurrentAudio(null)
-        }
-        // Don't revoke URL here as it's cached for reuse
-      }
-
-      audio.onended = cleanup
-      audio.onerror = cleanup
-
-      // Start playing audio and resolve immediately after play starts
-      await audio.play()
+      // Use the shared playTextWithTTS function which handles chunking and caching
+      await playTextWithTTS(selectionContent, apiKey, baseURL, model, voice, speed, audioCache)
     },
     onMutate: () => {
       setIsTooltipVisible(false)
@@ -153,8 +94,6 @@ export function SpeakButton() {
       }
       console.error('TTS error:', error)
       toast.error(error.message || i18n.t('speak.failedToGenerateSpeech'))
-      // Clear current audio reference on error
-      setCurrentAudio(null)
     },
   })
 
