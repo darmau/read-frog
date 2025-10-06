@@ -226,6 +226,18 @@ options:
       selectLanguages: 選擇語言
   config:
     title: 設定
+    tts:
+      title: 文字轉語音
+      description: 使用您偏好的 OpenAI 語音設定自訂「朗讀」按鈕。
+      model:
+        label: OpenAI 模型
+      voice:
+        label: 語音
+        placeholder: 例如 alloy
+      speed:
+        label: 速度
+        hint: 可輸入 0.25 至 4.0 的數值
+      betaDisabled: 啟用 Beta 體驗即可自訂文字轉語音設定。
     sync:
       title: 設定同步
       description: 匯入和匯出您的設定
