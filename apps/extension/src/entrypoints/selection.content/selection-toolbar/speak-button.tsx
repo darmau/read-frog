@@ -1,42 +1,27 @@
 import { Icon } from '@iconify/react'
+import { useMutation } from '@tanstack/react-query'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { toast } from 'sonner'
 import { configFieldsAtomMap } from '@/utils/atoms/config'
 import { getProviderApiKey, getProviderBaseURL } from '@/utils/config/helpers'
 import { isTooltipVisibleAtom, selectionContentAtom } from './atom'
 
+interface SpeakMutationVariables {
+  apiKey: string
+  baseURL: string
+  selectionContent: string
+}
+
 export function SpeakButton() {
-  const [isSpeaking, setIsSpeaking] = useState(false)
   const selectionContent = useAtomValue(selectionContentAtom)
   const setIsTooltipVisible = useSetAtom(isTooltipVisibleAtom)
   const providersConfig = useAtomValue(configFieldsAtomMap.providersConfig)
 
-  const handleClick = useCallback(async () => {
-    if (!selectionContent) {
-      toast.error('No text selected')
-      return
-    }
+  const openaiProvider = providersConfig.find(p => p.provider === 'openai' && p.enabled)
 
-    // Check if OpenAI is configured
-    const openaiProvider = providersConfig.find(p => p.provider === 'openai' && p.enabled)
-    if (!openaiProvider) {
-      toast.error('OpenAI provider is not configured or enabled')
-      return
-    }
-
-    const apiKey = getProviderApiKey(providersConfig, openaiProvider.id)
-    if (!apiKey) {
-      toast.error('OpenAI API key is not configured')
-      return
-    }
-
-    setIsSpeaking(true)
-    setIsTooltipVisible(false)
-
-    try {
-      const baseURL = getProviderBaseURL(providersConfig, openaiProvider.id) || 'https://api.openai.com/v1'
-
+  const speakMutation = useMutation<void, Error, SpeakMutationVariables>({
+    mutationFn: async ({ selectionContent, apiKey, baseURL }) => {
       const response = await fetch(`${baseURL}/audio/speech`, {
         method: 'POST',
         headers: {
@@ -60,29 +45,71 @@ export function SpeakButton() {
       const audioUrl = URL.createObjectURL(audioBlob)
       const audio = new Audio(audioUrl)
 
-      audio.onended = () => {
-        URL.revokeObjectURL(audioUrl)
-        setIsSpeaking(false)
-      }
+      await new Promise<void>((resolve, reject) => {
+        const cleanup = () => {
+          audio.onended = null
+          audio.onerror = null
+          URL.revokeObjectURL(audioUrl)
+        }
 
-      audio.onerror = () => {
-        URL.revokeObjectURL(audioUrl)
-        setIsSpeaking(false)
-        toast.error('Failed to play audio')
-      }
+        audio.onended = () => {
+          cleanup()
+          resolve()
+        }
 
-      await audio.play()
-      toast.success('Playing audio...')
-    }
-    catch (error) {
+        audio.onerror = () => {
+          cleanup()
+          reject(new Error('Failed to play audio'))
+        }
+
+        audio.play()
+          .then(() => {
+            toast.success('Playing audio...')
+          })
+          .catch((error) => {
+            cleanup()
+            reject(error instanceof Error ? error : new Error('Failed to play audio'))
+          })
+      })
+    },
+    onMutate: () => {
+      setIsTooltipVisible(false)
+    },
+    onError: (error) => {
       console.error('TTS error:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to generate speech')
-      setIsSpeaking(false)
+      toast.error(error.message || 'Failed to generate speech')
+    },
+  })
+
+  const { mutate, isPending } = speakMutation
+
+  const handleClick = useCallback(() => {
+    if (!selectionContent) {
+      toast.error('No text selected')
+      return
     }
-  }, [selectionContent, providersConfig, setIsTooltipVisible])
+
+    if (!openaiProvider) {
+      toast.error('OpenAI provider is not configured or enabled')
+      return
+    }
+
+    const apiKey = getProviderApiKey(providersConfig, openaiProvider.id)
+    if (!apiKey) {
+      toast.error('OpenAI API key is not configured')
+      return
+    }
+
+    const baseURL = getProviderBaseURL(providersConfig, openaiProvider.id) || 'https://api.openai.com/v1'
+
+    mutate({
+      apiKey,
+      baseURL,
+      selectionContent,
+    })
+  }, [selectionContent, providersConfig, openaiProvider, mutate])
 
   // Don't render the button if OpenAI is not configured
-  const openaiProvider = providersConfig.find(p => p.provider === 'openai' && p.enabled)
   const hasApiKey = openaiProvider && getProviderApiKey(providersConfig, openaiProvider.id)
 
   if (!hasApiKey) {
@@ -94,10 +121,10 @@ export function SpeakButton() {
       type="button"
       className="size-6 flex items-center justify-center hover:bg-zinc-300 dark:hover:bg-zinc-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       onClick={handleClick}
-      disabled={isSpeaking}
+      disabled={isPending}
       title="Speak selected text"
     >
-      {isSpeaking
+      {isPending
         ? (
             <Icon icon="eos-icons:loading" className="size-4" />
           )
