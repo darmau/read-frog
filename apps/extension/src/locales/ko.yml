@@ -233,6 +233,11 @@ options:
       voice:
         label: 음성
         placeholder: 예 alloy
+        selectPlaceholder: 음성을 선택하세요
+        preview: 미리 듣기
+        previewError: 이 음성을 재생할 수 없습니다. 잠시 후 다시 시도하세요.
+        previewSample: Read Frog의 인사입니다! 제가 읽어 드릴 때 이렇게 들립니다.
+        selectVoiceFirst: 미리 듣기 전에 음성을 선택하세요.
       speed:
         label: 속도
         hint: 0.25에서 4.0 사이의 값을 입력할 수 있습니다

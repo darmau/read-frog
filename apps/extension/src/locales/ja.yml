@@ -232,6 +232,11 @@ options:
       voice:
         label: ボイス
         placeholder: 例 alloy
+        selectPlaceholder: ボイスを選択
+        preview: 試聴
+        previewError: このボイスを再生できません。しばらくしてから再試行してください。
+        previewSample: Read Frog からこんにちは！朗読するときはこのように聞こえます。
+        selectVoiceFirst: 試聴する前にボイスを選択してください。
       speed:
         label: 速度
         hint: 0.25〜4.0 の値を入力できます

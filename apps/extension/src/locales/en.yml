@@ -234,6 +234,11 @@ options:
       voice:
         label: Voice
         placeholder: e.g. alloy
+        selectPlaceholder: Select a voice
+        preview: Preview
+        previewError: Unable to play this voice right now. Please try again.
+        previewSample: Hello from Read Frog! This is how I will sound when reading aloud.
+        selectVoiceFirst: Pick a voice before previewing.
       speed:
         label: Speed
         hint: Accepts values between 0.25 and 4.0

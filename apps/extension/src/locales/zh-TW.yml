@@ -234,6 +234,11 @@ options:
       voice:
         label: 語音
         placeholder: 例如 alloy
+        selectPlaceholder: 請選擇一個語音
+        preview: 試聽
+        previewError: 暫時無法播放此語音，請稍後再試。
+        previewSample: Read Frog 的問候！這是我朗讀時的語音。
+        selectVoiceFirst: 請先選擇語音再試聽。
       speed:
         label: 速度
         hint: 可輸入 0.25 至 4.0 的數值

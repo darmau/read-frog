@@ -234,6 +234,11 @@ options:
       voice:
         label: 声音
         placeholder: 例如 alloy
+        selectPlaceholder: 请选择一个声音
+        preview: 试听
+        previewError: 暂时无法播放该声音，请稍后再试。
+        previewSample: 来自 Read Frog 的问候！这是我朗读时的声音。
+        selectVoiceFirst: 请先选择声音再试听。
       speed:
         label: 语速
         hint: 支持的取值范围为 0.25 到 4.0
