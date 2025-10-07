@@ -62,4 +62,17 @@ export const FORCE_INLINE_TRANSLATION_TAGS = new Set([
   'H6',
 ])
 
-export const MAIN_CONTENT_IGNORE_TAGS = new Set(['HEADER', 'FOOTER', 'NAV', 'NOSCRIPT'])
+// Tags to exclude when translating "main content only" to focus on article text
+// These are typically UI elements, navigation, sidebars, and page chrome
+export const MAIN_CONTENT_IGNORE_TAGS = new Set([
+  'HEADER',
+  'FOOTER',
+  'NAV',
+  'NOSCRIPT',
+  'ASIDE', // Sidebars and complementary content
+  'DIALOG', // Modal dialogs and popups
+  'MENU', // Navigation menus
+  'BUTTON', // Action buttons
+  'FORM', // Form containers
+  'LABEL', // Form labels
+])
