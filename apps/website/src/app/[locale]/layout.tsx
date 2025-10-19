@@ -12,6 +12,7 @@ import { routing } from '@/i18n/routing'
 import { SITE_PUBLIC_URL } from '@/lib/constants'
 import { TRPCReactProvider } from '@/trpc/react'
 import '@/styles/global.css'
+import '@/styles/background.css'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -90,7 +91,6 @@ export default async function RootLayout({
   if (!hasLocale(routing.locales, locale)) {
     notFound()
   }
-
   setRequestLocale(locale)
 
   return (

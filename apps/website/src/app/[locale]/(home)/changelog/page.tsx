@@ -1,18 +1,21 @@
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
-import process from 'node:process'
 import { getTranslations } from 'next-intl/server'
 import { ChangelogContent } from './changelog-content'
 
+const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/mengxi-ream/read-frog/main/apps'
+
 async function getChangelogContent(type: 'extension' | 'website') {
-  const cwd = process.cwd()
-  const filePath = type === 'extension'
-    ? join(cwd, '../../apps/extension/CHANGELOG.md')
-    : join(cwd, '../../apps/website/CHANGELOG.md')
+  const url = `${GITHUB_RAW_BASE}/${type}/CHANGELOG.md`
 
   try {
-    const content = await readFile(filePath, 'utf-8')
-    return content
+    const response = await fetch(url, {
+      next: { revalidate: 3600 }, // Cache for 1 hour
+      headers: {
+        'User-Agent': 'read-frog-website',
+      },
+    })
+    if (!response.ok)
+      return ''
+    return await response.text()
   }
   catch {
     return ''

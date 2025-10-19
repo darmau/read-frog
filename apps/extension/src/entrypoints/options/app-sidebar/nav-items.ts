@@ -3,9 +3,10 @@ import { ApiProvidersPage } from '../pages/api-providers'
 import { ConfigPage } from '../pages/config'
 import { FloatingButtonPage } from '../pages/floating-button'
 import { GeneralPage } from '../pages/general'
+import { TextToSpeechPage } from '../pages/text-to-speech'
 import { TranslationPage } from '../pages/translation'
 
-type NavItemTitle = 'general' | 'apiProviders' | 'translation' | 'floatingButton' | 'config' | 'whatsNew' | 'survey'
+type NavItemTitle = 'general' | 'apiProviders' | 'translation' | 'floatingButton' | 'tts' | 'config' | 'whatsNew' | 'survey'
 
 interface ComponentNavItem {
   type: 'component'
@@ -55,6 +56,13 @@ export const SETTING_NAV_ITEMS = {
     icon: 'tabler:float-right',
     component: FloatingButtonPage,
   },
+  'text-to-speech': {
+    type: 'component',
+    title: 'tts',
+    url: '/tts',
+    icon: 'tabler:speakerphone',
+    component: TextToSpeechPage,
+  },
   'config': {
     type: 'component',
     title: 'config',
@@ -76,7 +84,7 @@ export const PRODUCT_NAV_ITEMS = {
     type: 'external',
     title: 'survey',
     action: true,
-    externalUrl: 'https://tally.so/r/m6aRVO',
+    externalUrl: 'https://tally.so/r/nrxr6L',
     icon: 'tabler:message-question',
   },
 } as const satisfies Record<string, NavItem>

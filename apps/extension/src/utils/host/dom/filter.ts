@@ -32,26 +32,32 @@ export function isShallowInlineTransNode(node: Node): boolean {
   return false
 }
 
+// treat large floating letter on some news websites as inline node
+// for example: https://www.economist.com/business/2025/08/21/china-is-quietly-upstaging-america-with-its-open-models
+function isLargeInitialFloatingLetter(element: HTMLElement): boolean {
+  const computedStyle = window.getComputedStyle(element)
+  return computedStyle.float === 'left' && !!element.nextSibling && isShallowInlineTransNode(element.nextSibling)
+}
+
 export function isShallowInlineHTMLElement(element: HTMLElement): boolean {
   // to prevent too many inline nodes that make <body> as a paragraph node
   if (!element.textContent?.trim()) {
     return false
   }
 
+  if (FORCE_BLOCK_TAGS.has(element.tagName)) {
+    return false
+  }
+
   const computedStyle = window.getComputedStyle(element)
 
-  // treat large floating letter on some news websites as inline node
-  // for example: https://www.economist.com/business/2025/08/21/china-is-quietly-upstaging-america-with-its-open-models
-  if (computedStyle.float !== 'none') {
+  if (isLargeInitialFloatingLetter(element)) {
     return true
   }
 
   const isInlineDisplay = ['inline', 'contents'].some(display => computedStyle.display.includes(display))
 
-  return (
-    isInlineDisplay
-    && !FORCE_BLOCK_TAGS.has(element.tagName)
-  )
+  return isInlineDisplay
 }
 
 // Note: !(inline node) != block node because of `notranslate` class and all cases not in the if else block
@@ -68,17 +74,17 @@ export function isShallowBlockTransNode(node: Node): boolean {
 export function isShallowBlockHTMLElement(element: HTMLElement): boolean {
   const computedStyle = window.getComputedStyle(element)
 
-  // treat large floating letter on some news websites as block node
-  if (computedStyle.float !== 'none') {
+  if (FORCE_BLOCK_TAGS.has(element.tagName)) {
+    return true
+  }
+
+  if (isLargeInitialFloatingLetter(element)) {
     return false
   }
 
   const isInlineDisplay = ['inline', 'contents'].some(display => computedStyle.display.includes(display))
 
-  return (
-    !isInlineDisplay
-    || FORCE_BLOCK_TAGS.has(element.tagName)
-  )
+  return !isInlineDisplay
 }
 
 export function isCustomDontWalkIntoElement(element: HTMLElement): boolean {
@@ -178,4 +184,18 @@ export function isTranslatedWrapperNode(node: Node) {
  */
 export function isTranslatedContentNode(node: Node): boolean {
   return isHTMLElement(node) && (node.classList.contains(BLOCK_CONTENT_CLASS) || node.classList.contains(INLINE_CONTENT_CLASS))
+}
+
+/**
+ * Check if an element has an ancestor that should not be walked into
+ */
+export function hasNoWalkAncestor(element: HTMLElement, config: Config): boolean {
+  let current: HTMLElement | null = element.parentElement
+  while (current) {
+    if (isDontWalkIntoButTranslateAsChildElement(current) || isDontWalkIntoAndDontTranslateAsChildElement(current, config)) {
+      return true
+    }
+    current = current.parentElement
+  }
+  return false
 }

@@ -5,9 +5,11 @@ import { DEFAULT_PROVIDER_CONFIG_LIST } from './providers'
 import { DEFAULT_SIDE_CONTENT_WIDTH } from './side'
 import { DEFAULT_AUTO_TRANSLATE_SHORTCUT_KEY, DEFAULT_BATCH_CONFIG, DEFAULT_REQUEST_CAPACITY, DEFAULT_REQUEST_RATE } from './translate'
 import { DEFAULT_TRANSLATION_NODE_STYLE } from './translation-node-style'
+import { DEFAULT_TTS_CONFIG } from './tts'
 
 export const CONFIG_STORAGE_KEY = 'config'
-export const CONFIG_SCHEMA_VERSION = 25
+export const CONFIG_SCHEMA_VERSION_STORAGE_KEY = '__configSchemaVersion'
+export const CONFIG_SCHEMA_VERSION = 26
 
 export const DEFAULT_FLOATING_BUTTON_POSITION = 0.66
 
@@ -27,7 +29,7 @@ export const DEFAULT_CONFIG: Config = {
     mode: 'bilingual',
     node: {
       enabled: true,
-      hotkey: 'Shift',
+      hotkey: 'Control',
     },
     page: {
       range: 'main',
@@ -44,8 +46,10 @@ export const DEFAULT_CONFIG: Config = {
       maxItemsPerBatch: DEFAULT_BATCH_CONFIG.maxItemsPerBatch,
     },
     translationNodeStyle: DEFAULT_TRANSLATION_NODE_STYLE,
+    // TODO: move this to translate.page config
     customAutoTranslateShortcutKey: DEFAULT_AUTO_TRANSLATE_SHORTCUT_KEY,
   },
+  tts: DEFAULT_TTS_CONFIG,
   floatingButton: {
     enabled: true,
     position: DEFAULT_FLOATING_BUTTON_POSITION,

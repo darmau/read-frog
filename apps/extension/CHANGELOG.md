@@ -1,5 +1,55 @@
 # @read-frog/extension
 
+## 1.13.4
+
+### Patch Changes
+
+- [#614](https://github.com/mengxi-ream/read-frog/pull/614) [`96b04ea`](https://github.com/mengxi-ream/read-frog/commit/96b04eaef4145c18f90a9f913e008dfbaf5d6916) Thanks [@ananaBMaster](https://github.com/ananaBMaster)! - fix(extension): improve floating element detection for large initial letters
+
+- [#617](https://github.com/mengxi-ream/read-frog/pull/617) [`0dbdac8`](https://github.com/mengxi-ream/read-frog/commit/0dbdac871256b5d0d556778bbec6c0719aa01202) Thanks [@ananaBMaster](https://github.com/ananaBMaster)! - feat: add more custom translation style
+
+- [#615](https://github.com/mengxi-ream/read-frog/pull/615) [`a0197ff`](https://github.com/mengxi-ream/read-frog/commit/a0197fffe547966951cbc6ea00e6970b2deb1e6f) Thanks [@ananaBMaster](https://github.com/ananaBMaster)! - chore: change default shortcut based on feedback
+
+- [#618](https://github.com/mengxi-ream/read-frog/pull/618) [`421e9ab`](https://github.com/mengxi-ream/read-frog/commit/421e9ab9d92e2de5e13a059beb4052effff4a4e6) Thanks [@ananaBMaster](https://github.com/ananaBMaster)! - fix(extension): disable Google provider in translation-only mode
+
+- [#575](https://github.com/mengxi-ream/read-frog/pull/575) [`46dffff`](https://github.com/mengxi-ream/read-frog/commit/46dffff835991df95e3b2dbf490f0fc4cbb3d36a) Thanks [@mercutiojohn](https://github.com/mercutiojohn)! - feat(extension): improve prompt settings UX with enhanced export mode and radio group selection
+
+## 1.13.3
+
+### Patch Changes
+
+- [#607](https://github.com/mengxi-ream/read-frog/pull/607) [`ab44be5`](https://github.com/mengxi-ream/read-frog/commit/ab44be5644160bd5cbf28786c1b27932de1c0dc6) Thanks [@mengxi-ream](https://github.com/mengxi-ream)! - fix(extension): set tts providerId to null in migration and fix selector placeholder
+
+## 1.13.2
+
+### Patch Changes
+
+- [#606](https://github.com/mengxi-ream/read-frog/pull/606) [`e9f6cd3`](https://github.com/mengxi-ream/read-frog/commit/e9f6cd37167c8ebc61deb1b9d48f6409427c1ada) Thanks [@mengxi-ream](https://github.com/mengxi-ream)! - fix(extension): prevent selection popup from being translated
+
+## 1.13.1
+
+### Patch Changes
+
+- [#594](https://github.com/mengxi-ream/read-frog/pull/594) [`179ee34`](https://github.com/mengxi-ream/read-frog/commit/179ee34f6000624c745dd600fde2c8098bca0042) Thanks [@mengxi-ream](https://github.com/mengxi-ream)! - fix(extension): translation style for flex parent containers
+
+## 1.13.0
+
+### Minor Changes
+
+- [#570](https://github.com/mengxi-ream/read-frog/pull/570) [`1e4e269`](https://github.com/mengxi-ream/read-frog/commit/1e4e269a3c9203c7b2dd2fd0fc8df7275e0d87d2) Thanks [@darmau](https://github.com/darmau)! - feat(extension): add text-to-speech feature for selection toolbar
+
+### Patch Changes
+
+- [#586](https://github.com/mengxi-ream/read-frog/pull/586) [`a74666e`](https://github.com/mengxi-ream/read-frog/commit/a74666e5882b1a9f7edb9e6d18ffd22950031e2e) Thanks [@Yukiniro](https://github.com/Yukiniro)! - fix(extension): update custom translation node styles for blockquote and dashed line
+
+- [#584](https://github.com/mengxi-ream/read-frog/pull/584) [`0bcf449`](https://github.com/mengxi-ream/read-frog/commit/0bcf449edffad09f5967f13bdcbf9851db69ff90) Thanks [@ananaBMaster](https://github.com/ananaBMaster)! - fix: don't translate code in pre tags
+
+- [#592](https://github.com/mengxi-ream/read-frog/pull/592) [`ae89107`](https://github.com/mengxi-ream/read-frog/commit/ae891071c86298953ca1f0b598d51ebe6eb60208) Thanks [@mengxi-ream](https://github.com/mengxi-ream)! - fix: update DeepLX default API URL
+
+- [#586](https://github.com/mengxi-ream/read-frog/pull/586) [`a74666e`](https://github.com/mengxi-ream/read-frog/commit/a74666e5882b1a9f7edb9e6d18ffd22950031e2e) Thanks [@Yukiniro](https://github.com/Yukiniro)! - fix: style of block node with inline and block children
+
+- [#588](https://github.com/mengxi-ream/read-frog/pull/588) [`f3eed7f`](https://github.com/mengxi-ream/read-frog/commit/f3eed7f85f073ac3ff9869c581dc13daa3e4ddbc) Thanks [@Yukiniro](https://github.com/Yukiniro)! - refactor: support Activity component
+
 ## 1.12.1
 
 ### Patch Changes

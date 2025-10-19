@@ -1,7 +1,9 @@
 {
   "home": {
-    "title": "Learn Languages in Depth",
-    "subtitle": "Translate and understand any webpage instantly with AI assistance",
+    "yourLanguage": "Your Language",
+    "translator": "Translator",
+    "teacher": "Teacher",
+    "subtitle": "Translate and understand anything in your browser.",
     "install": {
       "on": "Install on",
       "chrome": "Chrome",
@@ -10,6 +12,38 @@
     "experience": "Experience the power of",
     "aiTranslation": "AI Translation & Understanding",
     "poweredBy": "Powered by leading AI models"
+  },
+  "features": {
+    "supportProviders": {
+      "title": "Support multiple providers",
+      "explanation": "Read Frog can be seamlessly integrated with a wide range of major model services, allowing you to choose the most suitable provider depending on your specific use case.",
+      "nonCustomProvider": "LLM provider",
+      "customProvider": "OpenAI-Compatible custom provider",
+      "pureProvider": "Pure translation provider"
+    },
+    "littleFeatures": {
+      "multiLanguageSupport": "Multi-language",
+      "multiLanguageSupportExplanation": "Translation supports multiple languages, including English, French, German, Spanish, and more.",
+      "selectionTranslate": "Selection translation",
+      "selectionTranslateExplanation": "Allows users to translate selected text, providing immediate translation results.",
+      "context": "Contextual",
+      "contextExplanation": "Translations are contextually aware, ensuring more accurate and contextually appropriate translations.",
+      "multiFormatSupport": "Multi-format",
+      "multiFormatSupportExplanation": "Supports translation of various formats, such as PDFs, videos, and comics."
+    }
+  },
+  "testimonial": {
+    "songkeys": "AI provides word-by-word companion learning explanations. Foreign language learning becomes effortlessly advanced. 🤯👍 Open source, free, powered by passion. Come give us a 🌟star to show your support!",
+    "핌르르": "The experience is really smooth. I really like the reading mode. I look forward to supporting more models in the future.",
+    "Holden “Holden for Work”": "Open source & experience is good, hope to continue to optimize, add AI auxiliary related capabilities",
+    "MS R": "Recently noticed this open-source translation software on the forum. The overall design is quite good, though it seems to still be in its early stages with more features being added. Hope it keeps getting better in the future!"
+  },
+  "comment": {
+    "from": "From"
+  },
+  "recall": {
+    "title": "Get your AI learning assistant",
+    "description": "Read Frog is committed to providing language learners of all levels with an easy-to-use, intelligent, and personalized language learning experience. Let the world no longer depend on human language teachers."
   },
   "footer": {
     "description": "Learn languages deeply and effortlessly with AI.",
@@ -23,9 +57,7 @@
     "businessPartnership": "Business Partnership",
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy",
-    "github": "Github",
-    "creatorIntro": "Hey Curious 👋 I'm {name}, the creator of {appName}. Follow my work on",
-    "or": "or"
+    "github": "Github"
   },
   "metadata": {
     "appName": "Read Frog",

@@ -72,7 +72,7 @@ export async function removeOrShowNodeTranslation(point: Point, config: Config) 
 
   const id = crypto.randomUUID()
   walkAndLabelElement(node, id, config)
-  await translateWalkedElement(node, id, true, config)
+  await translateWalkedElement(node, id, config, true)
 }
 
 export function removeAllTranslatedWrapperNodes(
@@ -84,17 +84,17 @@ export function removeAllTranslatedWrapperNodes(
   })
 }
 
-export async function translateNodes(nodes: ChildNode[], walkId: string, toggle: boolean = false, config: Config) {
+export async function translateNodes(nodes: ChildNode[], walkId: string, toggle: boolean = false, config: Config, forceBlockTranslation: boolean = false) {
   const translationMode = config.translate.mode
   if (translationMode === 'translationOnly') {
     await translateNodeTranslationOnlyMode(nodes, walkId, config, toggle)
   }
   else if (translationMode === 'bilingual') {
-    await translateNodesBilingualMode(nodes, walkId, config, toggle)
+    await translateNodesBilingualMode(nodes, walkId, config, toggle, forceBlockTranslation)
   }
 }
 
-export async function translateNodesBilingualMode(nodes: ChildNode[], walkId: string, config: Config, toggle: boolean = false) {
+export async function translateNodesBilingualMode(nodes: ChildNode[], walkId: string, config: Config, toggle: boolean = false, forceBlockTranslation: boolean = false) {
   const transNodes = nodes.filter(node => isTransNode(node))
   if (transNodes.length === 0) {
     return
@@ -163,6 +163,7 @@ export async function translateNodesBilingualMode(nodes: ChildNode[], walkId: st
       targetNode,
       translatedText,
       config.translate.translationNodeStyle,
+      forceBlockTranslation,
     )
   }
   finally {
@@ -347,29 +348,51 @@ function findPreviousTranslatedWrapperInside(node: Element | Text, walkId: strin
   return null
 }
 
+function addInlineTranslation(ownerDoc: Document, translatedWrapperNode: HTMLElement, translatedNode: HTMLElement) {
+  const spaceNode = ownerDoc.createElement('span')
+  spaceNode.textContent = '  '
+  translatedWrapperNode.appendChild(spaceNode)
+  translatedNode.className = `${NOTRANSLATE_CLASS} ${INLINE_CONTENT_CLASS}`
+}
+
+function addBlockTranslation(ownerDoc: Document, translatedWrapperNode: HTMLElement, translatedNode: HTMLElement) {
+  const brNode = ownerDoc.createElement('br')
+  translatedWrapperNode.appendChild(brNode)
+  translatedNode.className = `${NOTRANSLATE_CLASS} ${BLOCK_CONTENT_CLASS}`
+}
+
+function isForceInlineTranslation(targetNode: TransNode) {
+  if (isHTMLElement(targetNode)) {
+    const computedStyle = window.getComputedStyle(targetNode)
+    return FORCE_INLINE_TRANSLATION_TAGS.has(targetNode.tagName) || computedStyle.display.includes('flex')
+  }
+  return false
+}
+
 async function insertTranslatedNodeIntoWrapper(
   translatedWrapperNode: HTMLElement,
   targetNode: TransNode,
   translatedText: string,
   translationNodeStyle: TranslationNodeStyle,
+  forceBlockTranslation: boolean = false,
 ) {
   // Use the wrapper's owner document
   const ownerDoc = getOwnerDocument(translatedWrapperNode)
   const translatedNode = ownerDoc.createElement('span')
-  const isForceInlineTranslationElement
-    = isHTMLElement(targetNode)
-      && FORCE_INLINE_TRANSLATION_TAGS.has(targetNode.tagName)
+  const forceInlineTranslation = isForceInlineTranslation(targetNode)
 
-  if (isForceInlineTranslationElement || isInlineTransNode(targetNode)) {
-    const spaceNode = ownerDoc.createElement('span')
-    spaceNode.textContent = '  '
-    translatedWrapperNode.appendChild(spaceNode)
-    translatedNode.className = `${NOTRANSLATE_CLASS} ${INLINE_CONTENT_CLASS}`
+  // priority: forceInlineTranslation > forceBlockTranslation > isInlineTransNode > isBlockTransNode
+  if (forceInlineTranslation) {
+    addInlineTranslation(ownerDoc, translatedWrapperNode, translatedNode)
+  }
+  else if (forceBlockTranslation) {
+    addBlockTranslation(ownerDoc, translatedWrapperNode, translatedNode)
+  }
+  else if (isInlineTransNode(targetNode)) {
+    addInlineTranslation(ownerDoc, translatedWrapperNode, translatedNode)
   }
   else if (isBlockTransNode(targetNode)) {
-    const brNode = ownerDoc.createElement('br')
-    translatedWrapperNode.appendChild(brNode)
-    translatedNode.className = `${NOTRANSLATE_CLASS} ${BLOCK_CONTENT_CLASS}`
+    addBlockTranslation(ownerDoc, translatedWrapperNode, translatedNode)
   }
   else {
     // not inline or block, maybe notranslate
@@ -455,8 +478,8 @@ function removeTranslatedWrapperWithRestore(wrapper: HTMLElement) {
 export async function translateWalkedElement(
   element: HTMLElement,
   walkId: string,
-  toggle: boolean = false,
   config: Config,
+  toggle: boolean = false,
 ) {
   const promises: Promise<void>[] = []
 
@@ -474,6 +497,9 @@ export async function translateWalkedElement(
       }
     }
 
+    const computedStyle = window.getComputedStyle(element)
+    const isFlexParent = computedStyle.display.includes('flex')
+
     if (!hasBlockNodeChild) {
       promises.push(translateNodes([element], walkId, toggle, config))
     }
@@ -483,9 +509,10 @@ export async function translateWalkedElement(
       let consecutiveInlineNodes: ChildNode[] = []
       for (const child of children) {
         if (isTransNode(child) && isBlockTransNode(child) && !isTextNode(child)) {
-          promises.push(translateNodes(consecutiveInlineNodes, walkId, toggle, config))
+          // force the children to be block translation style unless the parent is a flex parent
+          promises.push(translateNodes(consecutiveInlineNodes, walkId, toggle, config, !isFlexParent))
           consecutiveInlineNodes = []
-          promises.push(translateWalkedElement(child, walkId, toggle, config))
+          promises.push(translateWalkedElement(child, walkId, config, toggle))
         }
         else {
           consecutiveInlineNodes.push(child)
@@ -493,7 +520,7 @@ export async function translateWalkedElement(
       }
 
       if (consecutiveInlineNodes.length) {
-        promises.push(translateNodes(consecutiveInlineNodes, walkId, toggle, config))
+        promises.push(translateNodes(consecutiveInlineNodes, walkId, toggle, config, !isFlexParent))
         consecutiveInlineNodes = []
       }
     }
@@ -502,13 +529,13 @@ export async function translateWalkedElement(
     const promises: Promise<void>[] = []
     for (const child of element.childNodes) {
       if (isHTMLElement(child)) {
-        promises.push(translateWalkedElement(child, walkId, toggle, config))
+        promises.push(translateWalkedElement(child, walkId, config, toggle))
       }
     }
     if (element.shadowRoot) {
       for (const child of element.shadowRoot.children) {
         if (isHTMLElement(child)) {
-          promises.push(translateWalkedElement(child, walkId, toggle, config))
+          promises.push(translateWalkedElement(child, walkId, config, toggle))
         }
       }
     }

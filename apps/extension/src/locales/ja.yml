@@ -186,6 +186,7 @@ options:
       importSuccess: インポート成功
       import: インポート
       export: エクスポート
+      current: 使用中
       editPrompt:
         title: プロンプトを編集
         name: 名前
@@ -199,6 +200,9 @@ options:
         description: このプロンプトを削除しますか
         confirm: 確認
         cancel: キャンセル
+      exportPrompt:
+        exportSelected: 選択したものをエクスポート
+        cancel: キャンセル
     translationStyle:
       title: 翻訳表示スタイル
       description: 翻訳結果の表示スタイルを区別（具体的な表示例はサンプルを参照）
@@ -209,6 +213,8 @@ options:
         weakened: 弱化
         dashedLine: 破線
         border: 枠線
+        textColor: テキストカラー
+        background: 背景
     translationMode:
       title: 翻訳モード
       description: 翻訳テキストの表示方法を選択：バイリンガルまたは翻訳のみ
@@ -222,6 +228,24 @@ options:
       title: 言語に基づく自動翻訳
       description: 特定の言語が検出された場合にページコンテンツを自動翻訳します
       selectLanguages: 言語を選択
+  tts:
+    title: テキスト読み上げ
+    description: お好みの OpenAI 音声設定で読み上げボタンをカスタマイズします。
+    provider:
+      label: プロバイダー
+      selectPlaceholder: プロバイダーを選択
+      noProvider: OpenAI プロバイダーを追加してください
+    model:
+      label: モデル
+    voice:
+      label: ボイス
+      selectPlaceholder: ボイスを選択
+      preview: 試聴
+      previewSample: Read Frog からこんにちは！朗読するときはこのように聞こえます。
+    speed:
+      label: 速度
+      hint: 0.25〜4.0 の値を入力できます
+    betaDisabled: テキスト読み上げ設定をカスタマイズするには Beta 体験を有効にしてください。
   config:
     title: 設定
     sync:
@@ -244,6 +268,32 @@ options:
       viewConfig:
         expand: 設定を展開
         collapse: 設定を折りたたむ
+    backup:
+      title: 設定のバックアップ
+      description: 設定が変更された場合、1時間ごとに自動的にバックアップが作成されます。以前の設定をここで復元できます。（最大 $1 個のバックアップ）
+      loading: バックアップを読み込んでいます...
+      backupNow: 今すぐバックアップ
+      backupSuccess: バックアップが作成されました
+      restoreSuccess: 設定が復元されました
+      empty:
+        title: まだバックアップがありません
+        description: 設定が変更された場合、1時間ごとに自動的にバックアップが作成されます。
+      item:
+        extensionVersion: 拡張機能のバージョン：
+        schemaVersion: 設定のバージョン：
+        restore: 復元
+        export: エクスポート
+        delete: 削除
+      restore:
+        title: 設定のバックアップを復元しますか？
+        description: 現在の設定が最新のバックアップと異なる場合、自動的に現在の設定がバックアップされます。バックアップ数が上限を超える場合、最も古いバックアップが削除される可能性があります。
+        cancel: キャンセル
+        confirm: 復元
+      delete:
+        title: バックアップを削除しますか？
+        description: このバックアップを削除してもよろしいですか？この操作は元に戻せません。
+        cancel: キャンセル
+        confirm: 削除
     resetConfig:
       title: 設定をリセット
       description: すべての設定をデフォルト値にリセットします。
@@ -256,7 +306,7 @@ options:
   whatsNew:
     title: 新機能
   survey:
-    title: 意見を聞かせて
+    title: 新機能の提案
 side:
   sourceLang: ソース言語
   targetLang: 翻訳言語
@@ -288,5 +338,12 @@ noAPIKeyConfig:
 translation:
   sameLanguage: ソース言語とターゲット言語は異なる必要があります
   autoModeSameLanguage: 検出された言語 '$1' はターゲット言語と同じです
+speak:
+  fetchingAudio: 音声を生成しています...
+  playingAudio: 音声を再生しています...
+  failedToGenerateSpeech: 音声生成に失敗しました
+  noTextSelected: テキストが選択されていません
+  openaiNotConfigured: OpenAIプロバイダーが設定されていないか有効になっていません
+  openaiApiKeyNotConfigured: OpenAI APIキーが設定されていません
 shortcutKeySelector:
   placeholder: ショートカットを入力してください

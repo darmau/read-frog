@@ -1,5 +1,35 @@
 # @read-frog/website
 
+## 1.3.0
+
+### Minor Changes
+
+- [#593](https://github.com/mengxi-ream/read-frog/pull/593) [`3dce302`](https://github.com/mengxi-ream/read-frog/commit/3dce3026c00b98dfef8a2747b99fb2cececaa4a1) Thanks [@taiiiyang](https://github.com/taiiiyang)! - refactor(website): refactor landing page
+
+### Patch Changes
+
+- [#613](https://github.com/mengxi-ream/read-frog/pull/613) [`b9fcadf`](https://github.com/mengxi-ream/read-frog/commit/b9fcadf884c6317f9ed5064df9a47cf1981b3075) Thanks [@taiiiyang](https://github.com/taiiiyang)! - fix(website): fix auto jitter in home page and use text-balence for header title
+
+## 1.2.1
+
+### Patch Changes
+
+- [#601](https://github.com/mengxi-ream/read-frog/pull/601) [`a8cb8f8`](https://github.com/mengxi-ream/read-frog/commit/a8cb8f85515cdd63fb992f7126baf5f15798fd96) Thanks [@ananaBMaster](https://github.com/ananaBMaster)! - fix: twitter og image"
+
+- [#597](https://github.com/mengxi-ream/read-frog/pull/597) [`123aa77`](https://github.com/mengxi-ream/read-frog/commit/123aa77c1ceb0bf0774ae7beb6fa84a85d5eb36e) Thanks [@Yukiniro](https://github.com/Yukiniro)! - feat(website): support dynamic og content in blog
+
+## 1.2.0
+
+### Minor Changes
+
+- [#584](https://github.com/mengxi-ream/read-frog/pull/584) [`0bcf449`](https://github.com/mengxi-ream/read-frog/commit/0bcf449edffad09f5967f13bdcbf9851db69ff90) Thanks [@ananaBMaster](https://github.com/ananaBMaster)! - feat: add changelog
+
+### Patch Changes
+
+- [#589](https://github.com/mengxi-ream/read-frog/pull/589) [`650f679`](https://github.com/mengxi-ream/read-frog/commit/650f679a094f59173f96d9acb0bb1dd621f2249a) Thanks [@mengxi-ream](https://github.com/mengxi-ream)! - fix: path of changelog in website
+
+- [#588](https://github.com/mengxi-ream/read-frog/pull/588) [`f3eed7f`](https://github.com/mengxi-ream/read-frog/commit/f3eed7f85f073ac3ff9869c581dc13daa3e4ddbc) Thanks [@Yukiniro](https://github.com/Yukiniro)! - refactor: support Activity component
+
 ## 1.1.1
 
 ### Patch Changes

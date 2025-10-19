@@ -187,6 +187,7 @@ options:
       importSuccess: 가져오기 성공
       import: 가져오기
       export: 내보내기
+      current: 사용 중
       editPrompt:
         title: 프롬프트 편집
         name: 이름
@@ -200,6 +201,9 @@ options:
         description: 이 프롬프트를 삭제하시겠습니까
         confirm: 확인
         cancel: 취소
+      exportPrompt:
+        exportSelected: 선택 항목 내보내기
+        cancel: 취소
     translationStyle:
       title: 번역 표시 스타일
       description: 번역 결과 표시 스타일 구분 (구체적인 표시 예시는 샘플 참조)
@@ -210,6 +214,8 @@ options:
         weakened: 약화
         dashedLine: 점선
         border: 테두리
+        textColor: 텍스트 색상
+        background: 배경
     translationMode:
       title: 번역 모드
       description: '번역된 텍스트 표시 방법 선택: 이중 언어 또는 번역만'
@@ -223,6 +229,24 @@ options:
       title: 언어에 기반한 자동 번역
       description: 특정 언어가 감지되면 페이지 콘텐츠를 자동으로 번역합니다
       selectLanguages: 언어 선택
+  tts:
+    title: 텍스트 음성 변환
+    description: 선호하는 OpenAI 음성 설정으로 말하기 버튼을 사용자 지정하세요.
+    provider:
+      label: 제공업체
+      selectPlaceholder: 제공업체 선택
+      noProvider: OpenAI 제공업체를 추가하세요
+    model:
+      label: 모델
+    voice:
+      label: 음성
+      selectPlaceholder: 음성을 선택하세요
+      preview: 미리 듣기
+      previewSample: Read Frog의 인사입니다! 제가 읽어 드릴 때 이렇게 들립니다.
+    speed:
+      label: 속도
+      hint: 0.25에서 4.0 사이의 값을 입력할 수 있습니다
+    betaDisabled: 텍스트 음성 변환 설정을 사용자 지정하려면 Beta 체험을 활성화하세요.
   config:
     title: 설정
     sync:
@@ -245,6 +269,32 @@ options:
       viewConfig:
         expand: 설정 펼치기
         collapse: 설정 접기
+    backup:
+      title: 설정 백업
+      description: 설정이 변경되면 매시간 자동으로 백업이 생성됩니다. 여기에서 이전 설정을 복원할 수 있습니다. (최대 $1개 백업)
+      loading: 백업을 불러오는 중...
+      backupNow: 지금 백업
+      backupSuccess: 백업이 생성되었습니다
+      restoreSuccess: 설정이 복원되었습니다
+      empty:
+        title: 아직 사용 가능한 백업이 없습니다
+        description: 설정이 변경되면 매시간 자동으로 백업이 생성됩니다.
+      item:
+        extensionVersion: 확장 프로그램 버전：
+        schemaVersion: 설정 버전：
+        restore: 복원
+        export: 내보내기
+        delete: 삭제
+      restore:
+        title: 설정 백업을 복원하시겠습니까?
+        description: 현재 설정이 최신 백업과 다른 경우 자동으로 현재 설정이 백업됩니다. 백업 수가 제한을 초과하면 가장 오래된 백업이 삭제될 수 있습니다.
+        cancel: 취소
+        confirm: 복원
+      delete:
+        title: 백업을 삭제하시겠습니까?
+        description: 이 백업을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.
+        cancel: 취소
+        confirm: 삭제
     resetConfig:
       title: 기본 설정 복원
       description: 모든 설정을 기본값으로 재설정
@@ -257,7 +307,7 @@ options:
   whatsNew:
     title: 새로운 기능
   survey:
-    title: 의견을 들려주세요
+    title: 새로운 기능 제안
 side:
   sourceLang: 원본 언어
   targetLang: 대상 언어
@@ -289,5 +339,12 @@ noAPIKeyConfig:
 translation:
   sameLanguage: 원본 언어와 대상 언어는 달라야 합니다
   autoModeSameLanguage: 감지된 언어 '$1'은(는) 대상 언어와 같습니다
+speak:
+  fetchingAudio: 오디오 생성 중...
+  playingAudio: 오디오 재생 중...
+  failedToGenerateSpeech: 음성 생성 실패
+  noTextSelected: 텍스트가 선택되지 않았습니다
+  openaiNotConfigured: OpenAI 공급자가 구성되지 않았거나 활성화되지 않았습니다
+  openaiApiKeyNotConfigured: OpenAI API 키가 구성되지 않았습니다
 shortcutKeySelector:
   placeholder: 단축키를 입력해 주세요

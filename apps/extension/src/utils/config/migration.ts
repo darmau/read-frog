@@ -1,4 +1,7 @@
 import type { MigrationFunction } from './migration-scripts/types'
+import type { Config } from '@/types/config/config'
+import { i18n } from '#imports'
+import { configSchema } from '@/types/config/config'
 import { CONFIG_SCHEMA_VERSION } from '../constants/config'
 import { migrate as migrateV001ToV002 } from './migration-scripts/v001-to-v002'
 import { migrate as migrateV002ToV003 } from './migration-scripts/v002-to-v003'
@@ -24,6 +27,7 @@ import { migrate as migrateV021ToV022 } from './migration-scripts/v021-to-v022'
 import { migrate as migrateV022ToV023 } from './migration-scripts/v022-to-v023'
 import { migrate as migrateV023ToV024 } from './migration-scripts/v023-to-v024'
 import { migrate as migrateV024ToV025 } from './migration-scripts/v024-to-v025'
+import { migrate as migrateV025ToV026 } from './migration-scripts/v025-to-v026'
 
 export const LATEST_SCHEMA_VERSION = CONFIG_SCHEMA_VERSION
 
@@ -55,6 +59,7 @@ export const migrationScripts: Record<number, MigrationFunction> = {
   23: migrateV022ToV023,
   24: migrateV023ToV024,
   25: migrateV024ToV025,
+  26: migrateV025ToV026,
 }
 
 export async function runMigration(version: number, config: any): Promise<any> {
@@ -65,4 +70,26 @@ export async function runMigration(version: number, config: any): Promise<any> {
   }
 
   return migrationFn(config)
+}
+
+export async function migrateConfig(originalConfig: Config, originalConfigSchemaVersion: number) {
+  if (originalConfigSchemaVersion > CONFIG_SCHEMA_VERSION) {
+    throw new Error(i18n.t('options.config.sync.versionTooNew'))
+  }
+
+  if (originalConfigSchemaVersion < CONFIG_SCHEMA_VERSION) {
+    let currentVersion = originalConfigSchemaVersion
+    while (currentVersion < CONFIG_SCHEMA_VERSION) {
+      const nextVersion = currentVersion + 1
+      originalConfig = await runMigration(nextVersion, originalConfig)
+      currentVersion = nextVersion
+    }
+  }
+
+  const parseResult = configSchema.safeParse(originalConfig)
+  if (!parseResult.success) {
+    throw new Error(`${i18n.t('options.config.sync.validationError')}: ${parseResult.error.message}`)
+  }
+
+  return parseResult.data
 }

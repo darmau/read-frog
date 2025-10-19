@@ -1,82 +1,50 @@
 'use client'
 
+import { IconLanguage, IconMoustache } from '@tabler/icons-react'
 import { motion } from 'motion/react'
 import { useTranslations } from 'next-intl'
-import Image from 'next/image'
-import Link from 'next/link'
 import React from 'react'
-import { AuroraBackground } from '@/components/motion/aurora-background'
+import { Install } from '@/components/install'
 
 export function Header() {
   const t = useTranslations('home')
 
   return (
-    <AuroraBackground>
+    <div className="relative flex h-160 md:h-200 flex-col items-center justify-center bg-zinc-50 text-slate-950 dark:bg-zinc-900">
       <motion.div
-        initial={{ opacity: 0.0, y: 40 }}
+        initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{
           delay: 0.3,
           duration: 0.8,
           ease: 'easeInOut',
         }}
-        className="relative flex flex-col gap-4 items-center justify-center px-4 pt-14"
+        viewport={{ once: true }}
+        className="w-full md:max-w-6xl flex flex-col gap-4 items-center justify-center px-8 md:px-4 pt-20"
       >
-        <div className="text-4xl md:text-7xl font-bold dark:text-white text-center">
-          {t('title')}
-        </div>
-        <div className="font-extralight text-base md:text-2xl dark:text-neutral-200 py-4 text-center">
+        <h2 className="w-full text-balance whitespace-pre-wrap text-4xl md:text-7xl font-bold dark:text-white text-center tracking-normal leading-11 md:leading-20">
+          {t('yourLanguage')}
+          {' '}
+          <span className="inline-block align-middle">
+            <IconLanguage className="w-12 h-12 md:w-20 md:h-20 text-blue-500 inline-block align-middle" stroke={1.5} />
+            {t('translator')}
+          </span>
+          {' '}
+          <span className="inline-block align-middle">
+            <IconMoustache className="w-12 h-12 md:w-20 md:h-20 text-amber-500 inline-block align-middle" stroke={1.5} />
+            {t('teacher')}
+          </span>
+        </h2>
+        <div className="max-w-4xl text-base text-neutral-600 dark:text-neutral-200 py-4 text-center">
           {t('subtitle')}
         </div>
-        <Install />
+        <div className="mt-6">
+          <div className="text-center mb-4 font-light text-sm text-neutral-500 dark:text-neutral-400">
+            {t('install.on')}
+          </div>
+          <Install />
+        </div>
       </motion.div>
-    </AuroraBackground>
-  )
-}
-
-function Install() {
-  const t = useTranslations('home')
-  return (
-    <div className="mt-6">
-      <div className="text-center mb-4 font-light text-sm text-neutral-500 dark:text-neutral-400">
-        {t('install.on')}
-      </div>
-      <div className="flex items-center gap-4">
-        <InstallLink
-          href="https://chromewebstore.google.com/detail/read-frog/modkelfkcfjpgbfmnbnllalkiogfofhb?utm_source=official"
-          icon="/icons/chrome.png"
-        >
-          {t('install.chrome')}
-        </InstallLink>
-        <InstallLink
-          href="https://microsoftedge.microsoft.com/addons/detail/read-frog-open-source-a/cbcbomlgikfbdnoaohcjfledcoklcjbo"
-          icon="/icons/edge.png"
-        >
-          {t('install.edge')}
-        </InstallLink>
-
-      </div>
     </div>
-  )
-}
-
-function InstallLink({
-  href,
-  icon,
-  children,
-}: {
-  href: string
-  icon: string
-  children: React.ReactNode
-}) {
-  return (
-    <Link
-      href={href}
-      target="_blank"
-      className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2 flex items-center gap-2"
-    >
-      <Image src={icon} alt={icon} className="size-5" width={20} height={20} />
-      {children}
-    </Link>
   )
 }

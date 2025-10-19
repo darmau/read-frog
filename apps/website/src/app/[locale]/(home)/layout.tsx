@@ -21,7 +21,7 @@ export default async function Layout({
     <HomeLayout
       {...baseOptions(locale)}
       links={homeLinks(locale)}
-      className="flex flex-col flex-1"
+      className="flex flex-col flex-1 overflow-x-hidden"
     >
       <div className="flex-1">{children}</div>
       <Footer params={{ locale }} />

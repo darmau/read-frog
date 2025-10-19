@@ -188,6 +188,7 @@ options:
       importSuccess: 导入成功
       import: 导入
       export: 导出
+      current: 正在使用
       editPrompt:
         title: 编辑 Prompt
         name: 标题
@@ -201,6 +202,9 @@ options:
         description: 确认删除该 Prompt
         confirm: 确认
         cancel: 取消
+      exportPrompt:
+        exportSelected: 导出所选
+        cancel: 取消
     translationStyle:
       title: 翻译显示样式
       description: 区分翻译结果的显示样式，具体展示样式可参考示例
@@ -211,6 +215,8 @@ options:
         weakened: 弱化
         dashedLine: 虚线
         border: 边框
+        textColor: 文字颜色
+        background: 背景
     translationMode:
       title: 翻译模式
       description: 选择翻译文本的显示方式：双语对照或仅显示翻译
@@ -224,6 +230,24 @@ options:
       title: 基于语言的自动翻译
       description: 当检测到指定语言时自动翻译页面内容
       selectLanguages: 选择语言
+  tts:
+    title: 文本转语音
+    description: 自定义朗读按钮使用的 OpenAI 语音参数。
+    provider:
+      label: 提供商
+      selectPlaceholder: 选择提供商
+      noProvider: 请添加 OpenAI 提供商
+    model:
+      label: 模型
+    voice:
+      label: 声音
+      selectPlaceholder: 请选择一个声音
+      preview: 试听
+      previewSample: 来自 Read Frog 的问候！这是我朗读时的声音。
+    speed:
+      label: 语速
+      hint: 支持的取值范围为 0.25 到 4.0
+    betaDisabled: 启用测试体验后即可自定义文本转语音设置。
   config:
     title: 配置
     sync:
@@ -246,6 +270,32 @@ options:
       viewConfig:
         expand: 展开配置
         collapse: 收起配置
+    backup:
+      title: 配置备份
+      description: 如果配置发生变化，每小时会自动创建备份。您可以在这里恢复之前的配置。（最多 $1 个备份）
+      loading: 正在加载备份...
+      backupNow: 立即备份
+      backupSuccess: 备份创建成功
+      restoreSuccess: 配置恢复成功
+      empty:
+        title: 暂无可用备份
+        description: 如果配置发生变化，每小时会自动创建备份。
+      item:
+        extensionVersion: 扩展版本：
+        schemaVersion: 配置版本：
+        restore: 恢复
+        export: 导出
+        delete: 删除
+      restore:
+        title: 恢复配置备份？
+        description: 如果当前配置与最新备份不同，将自动备份您的当前配置。如果备份数量超过限制，最旧的备份可能会被删除。
+        cancel: 取消
+        confirm: 恢复
+      delete:
+        title: 删除备份？
+        description: 您确定要删除此备份吗？此操作无法撤销。
+        cancel: 取消
+        confirm: 删除
     resetConfig:
       title: 恢复默认配置
       description:
@@ -259,7 +309,7 @@ options:
   whatsNew:
     title: 最近更新
   survey:
-    title: 你的想法很重要
+    title: 新功能建议
 side:
   sourceLang: 来源语言
   targetLang: 目标语言
@@ -291,5 +341,12 @@ noAPIKeyConfig:
 translation:
   sameLanguage: 源语言和目标语言必须不同
   autoModeSameLanguage: 检测到的语言 '$1' 与目标语言相同
+speak:
+  fetchingAudio: 正在获取音频...
+  playingAudio: 正在播放音频...
+  failedToGenerateSpeech: 语音生成失败
+  noTextSelected: 未选择文本
+  openaiNotConfigured: OpenAI 提供商未配置或未启用
+  openaiApiKeyNotConfigured: OpenAI API Key 未配置
 shortcutKeySelector:
   placeholder: 请输入快捷键

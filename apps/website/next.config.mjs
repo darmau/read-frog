@@ -29,6 +29,12 @@ const config = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'registry.npmmirror.com',
+        port: '',
+        pathname: '/@lobehub/icons-static-webp/**',
+      },
     ],
 
     // Other possible configurations:

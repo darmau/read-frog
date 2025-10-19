@@ -188,6 +188,7 @@ options:
       importSuccess: Import Success
       import: Import
       export: Export
+      current: in use
       editPrompt:
         title: Edit Prompt
         name: Name
@@ -201,6 +202,9 @@ options:
         description: Confirm delete prompt
         confirm: Confirm
         cancel: Cancel
+      exportPrompt:
+        exportSelected: Export Selected
+        cancel: Cancel
     translationStyle:
       title: Translation Display Style
       description: Distinguish display styles for translation results (see sample for specific style demonstrations)
@@ -211,6 +215,8 @@ options:
         weakened: Weakened
         dashedLine: Dashed Line
         border: Border
+        textColor: Text Color
+        background: Background
     translationMode:
       title: Translation Mode
       description: 'Choose how the translated text is displayed: bilingual or translation only.'
@@ -224,6 +230,24 @@ options:
       title: Auto translate based on language
       description: Automatically translate page content when specific languages are detected
       selectLanguages: Select languages
+  tts:
+    title: Text to Speech
+    description: Customize the Speak button with your preferred OpenAI voice settings.
+    provider:
+      label: Provider
+      selectPlaceholder: Select a provider
+      noProvider: Please add OpenAI provider
+    model:
+      label: model
+    voice:
+      label: Voice
+      selectPlaceholder: Select a voice
+      preview: Preview
+      previewSample: Hello from Read Frog! This is how I will sound when reading aloud.
+    speed:
+      label: Speed
+      hint: Accepts values between 0.25 and 4.0
+    betaDisabled: Enable Beta Experience to customize text-to-speech settings.
   config:
     title: Config
     sync:
@@ -246,6 +270,32 @@ options:
       viewConfig:
         expand: Expand Config
         collapse: Collapse Config
+    backup:
+      title: Config Backup
+      description: Automatic backups are created every hour if the config is changed. You can restore previous configurations here. (Maximum $1 backups)
+      loading: Loading backups...
+      backupNow: Backup now
+      backupSuccess: Backup created successfully
+      restoreSuccess: Config restored successfully
+      empty:
+        title: No backups available yet
+        description: Backups are created automatically every hour if the config is changed.
+      item:
+        extensionVersion: 'Extension version:'
+        schemaVersion: 'Schema version:'
+        restore: Restore
+        export: Export
+        delete: Delete
+      restore:
+        title: Restore config backup?
+        description: Your current config will be automatically backed up if it is different from the latest backup. The oldest backup may be removed if the number of backups exceeds the limit.
+        cancel: Cancel
+        confirm: Restore
+      delete:
+        title: Delete backup?
+        description: Are you sure you want to delete this backup? This action cannot be undone.
+        cancel: Cancel
+        confirm: Delete
     resetConfig:
       title: Reset Config
       description: Reset all config to default value
@@ -258,7 +308,7 @@ options:
   whatsNew:
     title: What's New
   survey:
-    title: Your Voice Matters
+    title: New Feature Suggestion
 side:
   sourceLang: Source Language
   targetLang: Target Language
@@ -290,5 +340,12 @@ noAPIKeyConfig:
 translation:
   sameLanguage: Source and target languages must be different
   autoModeSameLanguage: Detected language '$1' is the same as target language
+speak:
+  fetchingAudio: Generating audio...
+  playingAudio: Playing audio...
+  failedToGenerateSpeech: Failed to generate speech
+  noTextSelected: No text selected
+  openaiNotConfigured: OpenAI provider is not configured or enabled
+  openaiApiKeyNotConfigured: OpenAI API key is not configured
 shortcutKeySelector:
   placeholder: Please enter the shortcut
