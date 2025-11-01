@@ -8,7 +8,7 @@ import { IconLoader2, IconVolume } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
 import { readUIMessageStream, streamText } from 'ai'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { useTextToSpeech } from '@/hooks/use-text-to-speech'
 import { isLLMTranslateProviderConfig, isNonAPIProvider, isPureAPIProvider } from '@/types/config/provider'
@@ -238,6 +238,13 @@ export function TranslatePopover() {
     return getLangLabel(localSourceLang)
   }, [localSourceLang, languageConfig.detectedCode, getLangLabel])
 
+  // Memoize language options to avoid re-rendering SelectItem components on every render
+  const languageSelectItems = useMemo(() => {
+    return langCodeISO6393Schema.options.map(code => (
+      <SelectItem key={code} value={code}>{getLangLabel(code)}</SelectItem>
+    ))
+  }, [getLangLabel])
+
   const handleRetranslate = useCallback(() => {
     setTranslatedText(undefined)
     void runTranslation()
@@ -267,9 +274,7 @@ export function TranslatePopover() {
                   {' '}
                   <span className="rounded-full bg-neutral-200 px-1 text-xs dark:bg-neutral-800">auto</span>
                 </SelectItem>
-                {langCodeISO6393Schema.options.map(code => (
-                  <SelectItem key={code} value={code}>{getLangLabel(code)}</SelectItem>
-                ))}
+                {languageSelectItems}
               </SelectContent>
             </Select>
           </div>
@@ -285,9 +290,7 @@ export function TranslatePopover() {
                 </SelectValue>
               </SelectTrigger>
               <SelectContent container={shadowWrapper} className="max-h-[300px]">
-                {langCodeISO6393Schema.options.map(code => (
-                  <SelectItem key={code} value={code}>{getLangLabel(code)}</SelectItem>
-                ))}
+                {languageSelectItems}
               </SelectContent>
             </Select>
           </div>
