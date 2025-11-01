@@ -403,5 +403,9 @@ speak:
   noTextSelected: No text selected
   openaiNotConfigured: OpenAI provider is not configured or enabled
   openaiApiKeyNotConfigured: OpenAI API key is not configured
+selection:
+  original: Original
+  translation: Translation
+  retranslate: Re-translate
 shortcutKeySelector:
   placeholder: Please enter the shortcut

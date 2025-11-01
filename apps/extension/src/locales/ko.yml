@@ -402,5 +402,9 @@ speak:
   noTextSelected: 텍스트가 선택되지 않았습니다
   openaiNotConfigured: OpenAI 공급자가 구성되지 않았거나 활성화되지 않았습니다
   openaiApiKeyNotConfigured: OpenAI API 키가 구성되지 않았습니다
+selection:
+  original: 원문
+  translation: 번역
+  retranslate: 재번역
 shortcutKeySelector:
   placeholder: 단축키를 입력해 주세요

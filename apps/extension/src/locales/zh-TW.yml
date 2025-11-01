@@ -403,5 +403,9 @@ speak:
   noTextSelected: 未選擇文字
   openaiNotConfigured: OpenAI 提供商未配置或未啟用
   openaiApiKeyNotConfigured: OpenAI API Key 未配置
+selection:
+  original: 原文
+  translation: 譯文
+  retranslate: 重新翻譯
 shortcutKeySelector:
   placeholder: 請輸入快捷鍵
