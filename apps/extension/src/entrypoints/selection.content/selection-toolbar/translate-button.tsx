@@ -70,15 +70,15 @@ export function TranslatePopover() {
     },
   })
 
-  // Initialize local language state from global config when popover opens
+  // Initialize local language state from extension config when popover opens
   useEffect(() => {
     if (!isVisible) {
       return
     }
 
-    setLocalSourceLang(prev => (isVisible ? languageConfig.sourceCode : prev))
-    setLocalTargetLang(prev => (isVisible ? languageConfig.targetCode : prev))
-    setTranslatedText(prev => (isVisible ? undefined : prev))
+    setLocalSourceLang(languageConfig.sourceCode)
+    setLocalTargetLang(languageConfig.targetCode)
+    setTranslatedText(undefined)
   }, [isVisible, languageConfig.sourceCode, languageConfig.targetCode])
 
   const handleClose = useCallback(() => {
