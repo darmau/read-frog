@@ -53,7 +53,16 @@ export function PopoverWrapper({ title, icon, children, onClose, isVisible, setI
       }
       const eventPath = event.composedPath()
       const isClickInsideTooltip = eventPath.includes(popoverRef.current)
-      if (!isClickInsideTooltip) {
+
+      // Check if click is inside a Select dropdown by checking the event path
+      const isClickInsideSelect = eventPath.some((el) => {
+        const element = el as HTMLElement
+        const role = element.getAttribute?.('role')
+        const dataRadixSelect = element.hasAttribute?.('data-radix-select-content')
+        return role === 'listbox' || dataRadixSelect
+      })
+
+      if (!isClickInsideTooltip && !isClickInsideSelect) {
         handleClose()
       }
     }
