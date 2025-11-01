@@ -243,7 +243,7 @@ export function TranslatePopover() {
       <div className="p-4 border-b">
         <div className="border-b pb-4 space-y-2">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 flex-1 min-w-0">{selectionContent}</p>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">{i18n.t('selection.original')}</span>
             <Select value={localSourceLang} onValueChange={value => setLocalSourceLang(value as LangCodeISO6393 | 'auto')}>
               <SelectTrigger className="!h-auto w-auto min-w-[100px] text-xs px-2 py-1 bg-white dark:bg-zinc-800">
                 <SelectValue asChild>
@@ -262,14 +262,11 @@ export function TranslatePopover() {
               </SelectContent>
             </Select>
           </div>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">{selectionContent}</p>
         </div>
-        <div className="pt-4">
+        <div className="pt-4 space-y-2">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-sm flex-1 min-w-0">
-              {isTranslating && !translatedText && <Icon icon="svg-spinners:3-dots-bounce" />}
-              {translatedText}
-              {isTranslating && translatedText && ' ●'}
-            </p>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">{i18n.t('selection.translation')}</span>
             <Select value={localTargetLang} onValueChange={value => setLocalTargetLang(value as LangCodeISO6393)}>
               <SelectTrigger className="!h-auto w-auto min-w-[100px] text-xs px-2 py-1 bg-white dark:bg-zinc-800">
                 <SelectValue asChild>
@@ -283,6 +280,11 @@ export function TranslatePopover() {
               </SelectContent>
             </Select>
           </div>
+          <p className="text-sm">
+            {isTranslating && !translatedText && <Icon icon="svg-spinners:3-dots-bounce" />}
+            {translatedText}
+            {isTranslating && translatedText && ' ●'}
+          </p>
         </div>
       </div>
       <div className="p-4 flex justify-between items-center">

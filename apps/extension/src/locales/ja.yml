@@ -401,5 +401,9 @@ speak:
   noTextSelected: テキストが選択されていません
   openaiNotConfigured: OpenAIプロバイダーが設定されていないか有効になっていません
   openaiApiKeyNotConfigured: OpenAI APIキーが設定されていません
+selection:
+  original: 原文
+  translation: 翻訳
+  retranslate: 再翻訳
 shortcutKeySelector:
   placeholder: ショートカットを入力してください
