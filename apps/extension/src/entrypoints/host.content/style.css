@@ -70,7 +70,7 @@
 }
 
 .read-frog-translated-content-wrapper[dir='rtl'] {
-  text-decoration-skip-ink: skip;
+  text-decoration-skip-ink: auto;
   font-family:
     'SF Arabic', 'Noto Sans Arabic', 'Geeza Pro', 'Baghdad', 'Segoe UI', Tahoma, Arial, 'Noto Naskh Arabic', sans-serif !important;
   font-feature-settings:
