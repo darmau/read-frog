@@ -71,5 +71,4 @@
 
 .read-frog-translated-content-wrapper[dir='rtl'] {
   text-decoration-skip-ink: skip;
-  word-break: keep-all;
 }
