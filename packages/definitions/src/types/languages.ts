@@ -403,7 +403,7 @@ export const LOCALE_TO_ISO6393: Partial<Record<LangCodeISO6391, LangCodeISO6393>
 export const langLevel = z.enum(['beginner', 'intermediate', 'advanced'])
 export type LangLevel = z.infer<typeof langLevel>
 
-// RTL (Right-to-Left) languages
+// RTL (Right-to-Left) languages basically Arabic-based languages
 export const RTL_LANG_CODES: readonly LangCodeISO6393[] = [
   'arb', // Standard Arabic
   'urd', // Urdu
@@ -413,7 +413,3 @@ export const RTL_LANG_CODES: readonly LangCodeISO6393[] = [
   'skr', // Saraiki
   'pbu', // Northern Pashto
 ] as const
-
-export function isRTL(langCode: LangCodeISO6393): boolean {
-  return RTL_LANG_CODES.includes(langCode)
-}
