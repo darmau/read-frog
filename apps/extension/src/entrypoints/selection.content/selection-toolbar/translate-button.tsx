@@ -219,9 +219,8 @@ export function TranslatePopover() {
   }, [isVisible, selectionContent, localSourceLang, localTargetLang, translateProviderConfig])
 
   const getLangLabel = useCallback((langCode: LangCodeISO6393) => {
-    const enName = LANG_CODE_TO_EN_NAME[langCode]
     const localeName = LANG_CODE_TO_LOCALE_NAME[langCode]
-    return `${enName} (${localeName})`
+    return localeName ?? langCode
   }, [])
 
   const getSourceLangLabel = useCallback(() => {
