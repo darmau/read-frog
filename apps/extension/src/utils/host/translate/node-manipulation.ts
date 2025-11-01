@@ -2,7 +2,7 @@ import type { APICallError } from 'ai'
 import type { Config } from '@/types/config/config'
 import type { TranslationMode, TranslationNodeStyleConfig } from '@/types/config/translate'
 import type { Point, TransNode } from '@/types/dom'
-import { ISO6393_TO_6391 } from '@repo/definitions'
+import { ISO6393_TO_6391, isRTL } from '@repo/definitions'
 import React from 'react'
 import textSmallCSS from '@/assets/tailwind/text-small.css?inline'
 import themeCSS from '@/assets/tailwind/theme.css?inline'
@@ -137,6 +137,8 @@ export async function translateNodesBilingualMode(nodes: ChildNode[], walkId: st
     const langAttr = ISO6393_TO_6391[config.language.targetCode]
     if (langAttr)
       translatedWrapperNode.setAttribute('lang', langAttr)
+    if (isRTL(config.language.targetCode))
+      translatedWrapperNode.setAttribute('dir', 'rtl')
     const spinner = createSpinnerInside(translatedWrapperNode)
 
     if (isTextNode(targetNode) || transNodes.length > 1) {
@@ -292,6 +294,8 @@ export async function translateNodeTranslationOnlyMode(nodes: ChildNode[], walkI
     const langAttr = ISO6393_TO_6391[config.language.targetCode]
     if (langAttr)
       translatedWrapperNode.setAttribute('lang', langAttr)
+    if (isRTL(config.language.targetCode))
+      translatedWrapperNode.setAttribute('dir', 'rtl')
     const spinner = createSpinnerInside(translatedWrapperNode)
 
     if (isTextNode(targetNode) || transNodes.length > 1) {
