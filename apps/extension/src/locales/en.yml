@@ -406,6 +406,5 @@ speak:
 selection:
   original: Original
   translation: Translation
-  retranslate: Re-translate
 shortcutKeySelector:
   placeholder: Please enter the shortcut

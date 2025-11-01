@@ -405,6 +405,5 @@ speak:
 selection:
   original: 원문
   translation: 번역
-  retranslate: 재번역
 shortcutKeySelector:
   placeholder: 단축키를 입력해 주세요

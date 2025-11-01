@@ -406,6 +406,5 @@ speak:
 selection:
   original: 原文
   translation: 譯文
-  retranslate: 重新翻譯
 shortcutKeySelector:
   placeholder: 請輸入快捷鍵

@@ -122,101 +122,101 @@ export function TranslatePopover() {
     }
   }, [session?.user?.id, selectionContent, translatedText, localSourceLang, localTargetLang, createVocabulary])
 
+  const runTranslation = useCallback(async () => {
+    const cleanText = selectionContent?.replace(/\u200B/g, '').trim()
+    if (!cleanText) {
+      return
+    }
+
+    const config = await getConfigFromStorage()
+    if (!config) {
+      throw new Error('No global config when translate text')
+    }
+
+    if (!translateProviderConfig) {
+      throw new Error(`No provider config for ${config.translate.providerId} when translate text`)
+    }
+
+    const { provider } = translateProviderConfig
+
+    setIsTranslating(true)
+
+    try {
+      let translatedText = ''
+
+      if (isNonAPIProvider(provider)) {
+        const sourceLang = localSourceLang === 'auto' ? 'auto' : (ISO6393_TO_6391[localSourceLang] ?? 'auto')
+        const targetLang = ISO6393_TO_6391[localTargetLang]
+        if (!targetLang) {
+          throw new Error(`Invalid target language code: ${localTargetLang}`)
+        }
+
+        if (provider === 'google') {
+          translatedText = await googleTranslate(cleanText, sourceLang, targetLang)
+        }
+        else if (provider === 'microsoft') {
+          translatedText = await microsoftTranslate(cleanText, sourceLang, targetLang)
+        }
+      }
+      else if (isPureAPIProvider(provider)) {
+        const sourceLang = localSourceLang === 'auto' ? 'auto' : (ISO6393_TO_6391[localSourceLang] ?? 'auto')
+        const targetLang = ISO6393_TO_6391[localTargetLang]
+        if (!targetLang) {
+          throw new Error(`Invalid target language code: ${localTargetLang}`)
+        }
+
+        if (provider === 'deeplx') {
+          translatedText = await deeplxTranslate(cleanText, sourceLang, targetLang, translateProviderConfig, { forceBackgroundFetch: true })
+        }
+      }
+      else if (isLLMTranslateProviderConfig(translateProviderConfig)) {
+        const targetLangName = LANG_CODE_TO_EN_NAME[localTargetLang]
+        const { id: providerId, models: { translate } } = translateProviderConfig
+        const translateModel = translate.isCustomModel ? translate.customModel : translate.model
+        const model = await getTranslateModelById(providerId)
+
+        // Configure ultrathink for thinking models
+        const providerOptions = getProviderOptions(translateModel ?? '')
+        const prompt = await getTranslatePrompt(targetLangName, cleanText)
+
+        // Use streaming for AI providers
+        const result = streamText({
+          model,
+          prompt,
+          providerOptions,
+        })
+
+        for await (const uiMessage of readUIMessageStream({
+          stream: result.toUIMessageStream(),
+        })) {
+          const lastPart = uiMessage.parts[uiMessage.parts.length - 1] as TextUIPart
+          setTranslatedText(lastPart.text)
+        }
+      }
+      else {
+        throw new Error(`Unknown provider: ${provider}`)
+      }
+
+      // Set final text if not streaming
+      if (translatedText && !isLLMTranslateProviderConfig(translateProviderConfig)) {
+        translatedText = translatedText.trim()
+        setTranslatedText(translatedText === cleanText ? '' : translatedText)
+      }
+    }
+    catch (error) {
+      console.error('Translation error:', error)
+      toast.error('Translation failed')
+    }
+    finally {
+      setIsTranslating(false)
+    }
+  }, [selectionContent, translateProviderConfig, localSourceLang, localTargetLang])
+
   useEffect(() => {
-    const translate = async () => {
-      const cleanText = selectionContent?.replace(/\u200B/g, '').trim()
-      if (!cleanText) {
-        return
-      }
-
-      const config = await getConfigFromStorage()
-      if (!config) {
-        throw new Error('No global config when translate text')
-      }
-
-      if (!translateProviderConfig) {
-        throw new Error(`No provider config for ${config.translate.providerId} when translate text`)
-      }
-
-      const { provider } = translateProviderConfig
-
-      setIsTranslating(true)
-
-      try {
-        let translatedText = ''
-
-        if (isNonAPIProvider(provider)) {
-          const sourceLang = localSourceLang === 'auto' ? 'auto' : (ISO6393_TO_6391[localSourceLang] ?? 'auto')
-          const targetLang = ISO6393_TO_6391[localTargetLang]
-          if (!targetLang) {
-            throw new Error(`Invalid target language code: ${localTargetLang}`)
-          }
-
-          if (provider === 'google') {
-            translatedText = await googleTranslate(cleanText, sourceLang, targetLang)
-          }
-          else if (provider === 'microsoft') {
-            translatedText = await microsoftTranslate(cleanText, sourceLang, targetLang)
-          }
-        }
-        else if (isPureAPIProvider(provider)) {
-          const sourceLang = localSourceLang === 'auto' ? 'auto' : (ISO6393_TO_6391[localSourceLang] ?? 'auto')
-          const targetLang = ISO6393_TO_6391[localTargetLang]
-          if (!targetLang) {
-            throw new Error(`Invalid target language code: ${localTargetLang}`)
-          }
-
-          if (provider === 'deeplx') {
-            translatedText = await deeplxTranslate(cleanText, sourceLang, targetLang, translateProviderConfig, { forceBackgroundFetch: true })
-          }
-        }
-        else if (isLLMTranslateProviderConfig(translateProviderConfig)) {
-          const targetLangName = LANG_CODE_TO_EN_NAME[localTargetLang]
-          const { id: providerId, models: { translate } } = translateProviderConfig
-          const translateModel = translate.isCustomModel ? translate.customModel : translate.model
-          const model = await getTranslateModelById(providerId)
-
-          // Configure ultrathink for thinking models
-          const providerOptions = getProviderOptions(translateModel ?? '')
-          const prompt = await getTranslatePrompt(targetLangName, cleanText)
-
-          // Use streaming for AI providers
-          const result = streamText({
-            model,
-            prompt,
-            providerOptions,
-          })
-
-          for await (const uiMessage of readUIMessageStream({
-            stream: result.toUIMessageStream(),
-          })) {
-            const lastPart = uiMessage.parts[uiMessage.parts.length - 1] as TextUIPart
-            setTranslatedText(lastPart.text)
-          }
-        }
-        else {
-          throw new Error(`Unknown provider: ${provider}`)
-        }
-
-        // Set final text if not streaming
-        if (translatedText && !isLLMTranslateProviderConfig(translateProviderConfig)) {
-          translatedText = translatedText.trim()
-          setTranslatedText(translatedText === cleanText ? '' : translatedText)
-        }
-      }
-      catch (error) {
-        console.error('Translation error:', error)
-        toast.error('Translation failed')
-      }
-      finally {
-        setIsTranslating(false)
-      }
-    }
-
     if (isVisible) {
-      void translate()
+      void runTranslation()
     }
-  }, [isVisible, selectionContent, localSourceLang, localTargetLang, translateProviderConfig])
+  }, [isVisible, runTranslation])
 
   const getLangLabel = useCallback((langCode: LangCodeISO6393) => {
     const localeName = LANG_CODE_TO_LOCALE_NAME[langCode]
@@ -230,6 +230,11 @@ export function TranslatePopover() {
     }
     return getLangLabel(localSourceLang)
   }, [localSourceLang, languageConfig.detectedCode, getLangLabel])
+
+  const handleRetranslate = useCallback(() => {
+    setTranslatedText(undefined)
+    void runTranslation()
+  }, [runTranslation, setTranslatedText])
 
   return (
     <PopoverWrapper
@@ -303,6 +308,16 @@ export function TranslatePopover() {
           {createVocabulary.isPending ? 'Saving...' : 'Save'}
         </button>
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleRetranslate}
+            disabled={!selectionContent || isTranslating}
+            className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Re-translate"
+            title="Re-translate"
+          >
+            <Icon icon="tabler:refresh" strokeWidth={1} className="size-4 text-zinc-600 dark:text-zinc-400" />
+          </button>
           <SpeakOriginalButton />
           <button
             type="button"
