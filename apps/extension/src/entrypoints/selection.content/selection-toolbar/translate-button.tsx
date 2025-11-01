@@ -238,7 +238,6 @@ export function TranslatePopover() {
     return getLangLabel(localSourceLang)
   }, [localSourceLang, languageConfig.detectedCode, getLangLabel])
 
-  // Memoize language options to avoid re-rendering SelectItem components on every render
   const languageSelectItems = useMemo(() => {
     return langCodeISO6393Schema.options.map(code => (
       <SelectItem key={code} value={code}>{getLangLabel(code)}</SelectItem>
@@ -263,7 +262,10 @@ export function TranslatePopover() {
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs text-zinc-500 dark:text-zinc-400">{i18n.t('selection.original')}</span>
             <Select value={localSourceLang} onValueChange={value => setLocalSourceLang(value as LangCodeISO6393 | 'auto')}>
-              <SelectTrigger className="!h-auto w-auto min-w-[100px] text-xs px-2 py-1 bg-white dark:bg-zinc-800">
+              <SelectTrigger
+                className="!h-auto w-auto min-w-[100px] text-xs px-2 py-1 bg-white dark:bg-zinc-800"
+                aria-label="Select source language"
+              >
                 <SelectValue asChild>
                   <span className="truncate text-xs">{getSourceLangLabel()}</span>
                 </SelectValue>
@@ -284,7 +286,10 @@ export function TranslatePopover() {
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs text-zinc-500 dark:text-zinc-400">{i18n.t('selection.translation')}</span>
             <Select value={localTargetLang} onValueChange={value => setLocalTargetLang(value as LangCodeISO6393)}>
-              <SelectTrigger className="!h-auto w-auto min-w-[100px] text-xs px-2 py-1 bg-white dark:bg-zinc-800">
+              <SelectTrigger
+                className="!h-auto w-auto min-w-[100px] text-xs px-2 py-1 bg-white dark:bg-zinc-800"
+                aria-label="Select target language"
+              >
                 <SelectValue asChild>
                   <span className="truncate text-xs">{getLangLabel(localTargetLang)}</span>
                 </SelectValue>
