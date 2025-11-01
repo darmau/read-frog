@@ -1,4 +1,4 @@
-import type { LangCodeISO6393 } from '@repo/definitions'
+import type { LangCodeISO6391, LangCodeISO6393 } from '@repo/definitions'
 import type { TextUIPart } from 'ai'
 import { i18n } from '#imports'
 import { Icon } from '@iconify/react'
@@ -122,6 +122,21 @@ export function TranslatePopover() {
     }
   }, [session?.user?.id, selectionContent, translatedText, localSourceLang, localTargetLang, createVocabulary])
 
+  // Converts ISO 639-3 language codes to ISO 639-1 for API translation services
+  const convertLanguageCodes = useCallback((
+    sourceCode: LangCodeISO6393 | 'auto',
+    targetCode: LangCodeISO6393,
+  ): { sourceLang: LangCodeISO6391 | 'auto', targetLang: LangCodeISO6391 } => {
+    const sourceLang = sourceCode === 'auto' ? 'auto' : (ISO6393_TO_6391[sourceCode] ?? 'auto')
+    const targetLang = ISO6393_TO_6391[targetCode]
+
+    if (!targetLang) {
+      throw new Error(`Invalid target language code: ${targetCode}`)
+    }
+
+    return { sourceLang, targetLang }
+  }, [])
+
   const runTranslation = useCallback(async () => {
     const cleanText = selectionContent?.replace(/\u200B/g, '').trim()
     if (!cleanText) {
@@ -145,11 +160,7 @@ export function TranslatePopover() {
       let translatedText = ''
 
       if (isNonAPIProvider(provider)) {
-        const sourceLang = localSourceLang === 'auto' ? 'auto' : (ISO6393_TO_6391[localSourceLang] ?? 'auto')
-        const targetLang = ISO6393_TO_6391[localTargetLang]
-        if (!targetLang) {
-          throw new Error(`Invalid target language code: ${localTargetLang}`)
-        }
+        const { sourceLang, targetLang } = convertLanguageCodes(localSourceLang, localTargetLang)
 
         if (provider === 'google') {
           translatedText = await googleTranslate(cleanText, sourceLang, targetLang)
@@ -159,11 +170,7 @@ export function TranslatePopover() {
         }
       }
       else if (isPureAPIProvider(provider)) {
-        const sourceLang = localSourceLang === 'auto' ? 'auto' : (ISO6393_TO_6391[localSourceLang] ?? 'auto')
-        const targetLang = ISO6393_TO_6391[localTargetLang]
-        if (!targetLang) {
-          throw new Error(`Invalid target language code: ${localTargetLang}`)
-        }
+        const { sourceLang, targetLang } = convertLanguageCodes(localSourceLang, localTargetLang)
 
         if (provider === 'deeplx') {
           translatedText = await deeplxTranslate(cleanText, sourceLang, targetLang, translateProviderConfig, { forceBackgroundFetch: true })
@@ -210,7 +217,7 @@ export function TranslatePopover() {
     finally {
       setIsTranslating(false)
     }
-  }, [selectionContent, translateProviderConfig, localSourceLang, localTargetLang])
+  }, [selectionContent, translateProviderConfig, localSourceLang, localTargetLang, convertLanguageCodes])
 
   useEffect(() => {
     if (isVisible) {
