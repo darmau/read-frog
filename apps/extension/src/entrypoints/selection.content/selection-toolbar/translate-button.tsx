@@ -8,7 +8,7 @@ import { IconLoader2, IconVolume } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
 import { readUIMessageStream, streamText } from 'ai'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { useTextToSpeech } from '@/hooks/use-text-to-speech'
 import { isLLMTranslateProviderConfig, isNonAPIProvider, isPureAPIProvider } from '@/types/config/provider'
@@ -23,6 +23,7 @@ import { sendMessage } from '@/utils/message'
 import { getTranslatePrompt } from '@/utils/prompts/translate'
 import { getTranslateModelById } from '@/utils/providers/model'
 import { trpc } from '@/utils/trpc/client'
+import { shadowWrapper } from '../index'
 import { isSelectionToolbarVisibleAtom, isTranslatePopoverVisibleAtom, mouseClickPositionAtom, selectionContentAtom } from './atom'
 import { PopoverWrapper } from './components/popover-wrapper'
 
@@ -57,7 +58,6 @@ export function TranslatePopover() {
   const selectionContent = useAtomValue(selectionContentAtom)
   const [isVisible, setIsVisible] = useAtom(isTranslatePopoverVisibleAtom)
   const { data: session } = authClient.useSession()
-  const popoverRef = useRef<HTMLDivElement>(null)
 
   // Local language selection state (only affects current translation)
   const [localSourceLang, setLocalSourceLang] = useState<LangCodeISO6393 | 'auto'>('auto')
@@ -72,11 +72,13 @@ export function TranslatePopover() {
 
   // Initialize local language state from global config when popover opens
   useEffect(() => {
-    if (isVisible) {
-      setLocalSourceLang(languageConfig.sourceCode)
-      setLocalTargetLang(languageConfig.targetCode)
-      setTranslatedText(undefined)
+    if (!isVisible) {
+      return
     }
+
+    setLocalSourceLang(prev => (isVisible ? languageConfig.sourceCode : prev))
+    setLocalTargetLang(prev => (isVisible ? languageConfig.targetCode : prev))
+    setTranslatedText(prev => (isVisible ? undefined : prev))
   }, [isVisible, languageConfig.sourceCode, languageConfig.targetCode])
 
   const handleClose = useCallback(() => {
@@ -243,12 +245,12 @@ export function TranslatePopover() {
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm text-zinc-600 dark:text-zinc-400 flex-1 min-w-0">{selectionContent}</p>
             <Select value={localSourceLang} onValueChange={value => setLocalSourceLang(value as LangCodeISO6393 | 'auto')}>
-              <SelectTrigger className="!h-auto w-auto min-w-[100px] text-xs px-2 py-1">
+              <SelectTrigger className="!h-auto w-auto min-w-[100px] text-xs px-2 py-1 bg-white dark:bg-zinc-800">
                 <SelectValue asChild>
                   <span className="truncate text-xs">{getSourceLangLabel()}</span>
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent container={popoverRef.current} className="max-h-[300px]">
+              <SelectContent container={shadowWrapper} className="max-h-[300px]">
                 <SelectItem value="auto">
                   {getLangLabel(languageConfig.detectedCode)}
                   {' '}
@@ -269,12 +271,12 @@ export function TranslatePopover() {
               {isTranslating && translatedText && ' ●'}
             </p>
             <Select value={localTargetLang} onValueChange={value => setLocalTargetLang(value as LangCodeISO6393)}>
-              <SelectTrigger className="!h-auto w-auto min-w-[100px] text-xs px-2 py-1">
+              <SelectTrigger className="!h-auto w-auto min-w-[100px] text-xs px-2 py-1 bg-white dark:bg-zinc-800">
                 <SelectValue asChild>
                   <span className="truncate text-xs">{getLangLabel(localTargetLang)}</span>
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent container={popoverRef.current} className="max-h-[300px]">
+              <SelectContent container={shadowWrapper} className="max-h-[300px]">
                 {langCodeISO6393Schema.options.map(code => (
                   <SelectItem key={code} value={code}>{getLangLabel(code)}</SelectItem>
                 ))}
