@@ -1,12 +1,14 @@
+import type { LangCodeISO6393 } from '@repo/definitions'
 import type { TextUIPart } from 'ai'
 import { i18n } from '#imports'
 import { Icon } from '@iconify/react'
-import { ISO6393_TO_6391, LANG_CODE_TO_EN_NAME } from '@repo/definitions'
+import { ISO6393_TO_6391, LANG_CODE_TO_EN_NAME, LANG_CODE_TO_LOCALE_NAME, langCodeISO6393Schema } from '@repo/definitions'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/components/select'
 import { IconLoader2, IconVolume } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
 import { readUIMessageStream, streamText } from 'ai'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { useTextToSpeech } from '@/hooks/use-text-to-speech'
 import { isLLMTranslateProviderConfig, isNonAPIProvider, isPureAPIProvider } from '@/types/config/provider'
@@ -55,6 +57,11 @@ export function TranslatePopover() {
   const selectionContent = useAtomValue(selectionContentAtom)
   const [isVisible, setIsVisible] = useAtom(isTranslatePopoverVisibleAtom)
   const { data: session } = authClient.useSession()
+  const popoverRef = useRef<HTMLDivElement>(null)
+
+  // Local language selection state (only affects current translation)
+  const [localSourceLang, setLocalSourceLang] = useState<LangCodeISO6393 | 'auto'>('auto')
+  const [localTargetLang, setLocalTargetLang] = useState<LangCodeISO6393>('eng')
 
   const createVocabulary = useMutation({
     ...trpc.vocabulary.create.mutationOptions(),
@@ -62,6 +69,15 @@ export function TranslatePopover() {
       toast.success(`Translation saved successfully! Please go to ${WEBSITE_URL}/vocabulary to view it.`)
     },
   })
+
+  // Initialize local language state from global config when popover opens
+  useEffect(() => {
+    if (isVisible) {
+      setLocalSourceLang(languageConfig.sourceCode)
+      setLocalTargetLang(languageConfig.targetCode)
+      setTranslatedText(undefined)
+    }
+  }, [isVisible, languageConfig.sourceCode, languageConfig.targetCode])
 
   const handleClose = useCallback(() => {
     setTranslatedText(undefined)
@@ -95,14 +111,14 @@ export function TranslatePopover() {
       await createVocabulary.mutateAsync({
         originalText: selectionContent,
         translation: translatedText,
-        sourceLanguageISO6393: config.language.sourceCode === 'auto' ? 'eng' : config.language.sourceCode,
-        targetLanguageISO6393: config.language.targetCode,
+        sourceLanguageISO6393: localSourceLang === 'auto' ? 'eng' : localSourceLang,
+        targetLanguageISO6393: localTargetLang,
       })
     }
     catch {
       // Error handled by mutation
     }
-  }, [session?.user?.id, selectionContent, translatedText, createVocabulary])
+  }, [session?.user?.id, selectionContent, translatedText, localSourceLang, localTargetLang, createVocabulary])
 
   useEffect(() => {
     const translate = async () => {
@@ -128,10 +144,10 @@ export function TranslatePopover() {
         let translatedText = ''
 
         if (isNonAPIProvider(provider)) {
-          const sourceLang = languageConfig.sourceCode === 'auto' ? 'auto' : (ISO6393_TO_6391[languageConfig.sourceCode] ?? 'auto')
-          const targetLang = ISO6393_TO_6391[languageConfig.targetCode]
+          const sourceLang = localSourceLang === 'auto' ? 'auto' : (ISO6393_TO_6391[localSourceLang] ?? 'auto')
+          const targetLang = ISO6393_TO_6391[localTargetLang]
           if (!targetLang) {
-            throw new Error(`Invalid target language code: ${languageConfig.targetCode}`)
+            throw new Error(`Invalid target language code: ${localTargetLang}`)
           }
 
           if (provider === 'google') {
@@ -142,10 +158,10 @@ export function TranslatePopover() {
           }
         }
         else if (isPureAPIProvider(provider)) {
-          const sourceLang = languageConfig.sourceCode === 'auto' ? 'auto' : (ISO6393_TO_6391[languageConfig.sourceCode] ?? 'auto')
-          const targetLang = ISO6393_TO_6391[languageConfig.targetCode]
+          const sourceLang = localSourceLang === 'auto' ? 'auto' : (ISO6393_TO_6391[localSourceLang] ?? 'auto')
+          const targetLang = ISO6393_TO_6391[localTargetLang]
           if (!targetLang) {
-            throw new Error(`Invalid target language code: ${languageConfig.targetCode}`)
+            throw new Error(`Invalid target language code: ${localTargetLang}`)
           }
 
           if (provider === 'deeplx') {
@@ -153,7 +169,7 @@ export function TranslatePopover() {
           }
         }
         else if (isLLMTranslateProviderConfig(translateProviderConfig)) {
-          const targetLangName = LANG_CODE_TO_EN_NAME[languageConfig.targetCode]
+          const targetLangName = LANG_CODE_TO_EN_NAME[localTargetLang]
           const { id: providerId, models: { translate } } = translateProviderConfig
           const translateModel = translate.isCustomModel ? translate.customModel : translate.model
           const model = await getTranslateModelById(providerId)
@@ -198,7 +214,21 @@ export function TranslatePopover() {
     if (isVisible) {
       void translate()
     }
-  }, [isVisible, selectionContent, languageConfig.sourceCode, languageConfig.targetCode, translateProviderConfig])
+  }, [isVisible, selectionContent, localSourceLang, localTargetLang, translateProviderConfig])
+
+  const getLangLabel = useCallback((langCode: LangCodeISO6393) => {
+    const enName = LANG_CODE_TO_EN_NAME[langCode]
+    const localeName = LANG_CODE_TO_LOCALE_NAME[langCode]
+    return `${enName} (${localeName})`
+  }, [])
+
+  const getSourceLangLabel = useCallback(() => {
+    if (localSourceLang === 'auto') {
+      const detectedCode = languageConfig.detectedCode
+      return `${getLangLabel(detectedCode)} (auto)`
+    }
+    return getLangLabel(localSourceLang)
+  }, [localSourceLang, languageConfig.detectedCode, getLangLabel])
 
   return (
     <PopoverWrapper
@@ -209,13 +239,48 @@ export function TranslatePopover() {
       setIsVisible={setIsVisible}
     >
       <div className="p-4 border-b">
-        <div className="border-b pb-4"><p className="text-sm text-zinc-600 dark:text-zinc-400">{selectionContent}</p></div>
+        <div className="border-b pb-4 space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 flex-1 min-w-0">{selectionContent}</p>
+            <Select value={localSourceLang} onValueChange={value => setLocalSourceLang(value as LangCodeISO6393 | 'auto')}>
+              <SelectTrigger className="!h-auto w-auto min-w-[100px] text-xs px-2 py-1">
+                <SelectValue asChild>
+                  <span className="truncate text-xs">{getSourceLangLabel()}</span>
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent container={popoverRef.current} className="max-h-[300px]">
+                <SelectItem value="auto">
+                  {getLangLabel(languageConfig.detectedCode)}
+                  {' '}
+                  <span className="rounded-full bg-neutral-200 px-1 text-xs dark:bg-neutral-800">auto</span>
+                </SelectItem>
+                {langCodeISO6393Schema.options.map(code => (
+                  <SelectItem key={code} value={code}>{getLangLabel(code)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         <div className="pt-4">
-          <p className="text-sm">
-            {isTranslating && !translatedText && <Icon icon="svg-spinners:3-dots-bounce" />}
-            {translatedText}
-            {isTranslating && translatedText && ' ●'}
-          </p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm flex-1 min-w-0">
+              {isTranslating && !translatedText && <Icon icon="svg-spinners:3-dots-bounce" />}
+              {translatedText}
+              {isTranslating && translatedText && ' ●'}
+            </p>
+            <Select value={localTargetLang} onValueChange={value => setLocalTargetLang(value as LangCodeISO6393)}>
+              <SelectTrigger className="!h-auto w-auto min-w-[100px] text-xs px-2 py-1">
+                <SelectValue asChild>
+                  <span className="truncate text-xs">{getLangLabel(localTargetLang)}</span>
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent container={popoverRef.current} className="max-h-[300px]">
+                {langCodeISO6393Schema.options.map(code => (
+                  <SelectItem key={code} value={code}>{getLangLabel(code)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
       <div className="p-4 flex justify-between items-center">
