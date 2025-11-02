@@ -31,7 +31,7 @@ import {
 } from '../dom/traversal'
 import { decorateTranslationNode } from './decorate-translation'
 import { translateText, validateTranslationConfig } from './translate-text'
-import { setTranslationLangAndDir } from './translation-attributes'
+import { setTranslationDir } from './translation-attributes'
 
 const translatingNodes = new WeakSet<ChildNode>()
 const originalContentMap = new Map<Element, string>()
@@ -134,7 +134,7 @@ export async function translateNodesBilingualMode(nodes: ChildNode[], walkId: st
     translatedWrapperNode.className = `${NOTRANSLATE_CLASS} ${CONTENT_WRAPPER_CLASS}`
     translatedWrapperNode.setAttribute(TRANSLATION_MODE_ATTRIBUTE, 'bilingual' satisfies TranslationMode)
     translatedWrapperNode.setAttribute(WALKED_ATTRIBUTE, walkId)
-    setTranslationLangAndDir(translatedWrapperNode, config)
+    setTranslationDir(translatedWrapperNode, config)
     const spinner = createSpinnerInside(translatedWrapperNode)
 
     if (isTextNode(targetNode) || transNodes.length > 1) {
@@ -287,7 +287,7 @@ export async function translateNodeTranslationOnlyMode(nodes: ChildNode[], walkI
     translatedWrapperNode.setAttribute(TRANSLATION_MODE_ATTRIBUTE, 'translationOnly' satisfies TranslationMode)
     translatedWrapperNode.setAttribute(WALKED_ATTRIBUTE, walkId)
     translatedWrapperNode.style.display = 'contents'
-    setTranslationLangAndDir(translatedWrapperNode, config)
+    setTranslationDir(translatedWrapperNode, config)
     const spinner = createSpinnerInside(translatedWrapperNode)
 
     if (isTextNode(targetNode) || transNodes.length > 1) {
